@@ -1,0 +1,1039 @@
+:root{
+  --bg:#f4f4f4;
+  --ink:#1a1a1a;
+  --line:#bdbdbd;
+  --soft:#e9e9e9;
+  --frame:#cfcfcf;
+  --shadow:0 6px 18px rgba(0,0,0,.08);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+*{ box-sizing:border-box; }
+_toggle{ display:none !important; }
+
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+}
+
+.desktop{
+  height:100vh;
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap:18px;
+  padding:18px;
+}
+
+/* LEFT */
+.left-col{ position:relative; }
+.window{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.window-header{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-bottom:1px solid var(--soft);
+  background:#fafafa;
+  user-select:none;
+}
+.window-title{
+  margin-left:6px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:#444;
+}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  border:1px solid rgba(0,0,0,.15);
+}
+.dot.red{ background:#ff5f57; }
+.dot.yellow{ background:#ffbd2e; }
+.dot.green{ background:#28c840; }
+
+.window-body{ padding:12px; }
+.about-text{
+  margin:0;
+  font-family:var(--mono);
+  font-size:12px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  color:#2b2b2b;
+}
+
+/* MAIN */
+.main-col{ min-width:0; position:relative; }
+
+.search-bar{
+  height:40px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border: 1px solid #000;
+  background:#fff;
+  border-radius:18px;
+  padding:8px 10px;
+  box-shadow:0 1px 0 rgba(0,0,0,.03);
+  margin-bottom: 12px;
+}
+.search-icon{ font-size:14px; opacity:.7; }
+.search-bar input{
+  border:0;
+  outline:0;
+  width:100%;
+  font-size:14px;
+  background:transparent;
+}
+
+.top-nav{
+  display:flex;
+  gap:18px;
+  padding:10px 2px 14px;
+  align-items:center;
+}
+.nav-link{
+  border:0;
+  background:transparent;
+  font-family:var(--sans);
+  font-size:13px;
+  color:#444;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:8px;
+}
+.nav-link:hover{ background:rgba(0,0,0,.04); }
+.nav-link.is-active{
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+
+/* VIEWS */
+.view{ display:none; }
+.view.is-active{ display:block; }
+
+.big-frame{
+  border:2px solid var(--frame);
+  background:rgba(255,255,255,.35);
+  border-radius:6px;
+  height:calc(100vh - 18px - 40px - 10px - 14px - 18px);
+  padding:14px;
+}
+
+/* WEEKLY */
+.scroll-area {
+  overflow-y: auto;
+  max-height: 100%;
+  pointer-events: auto;
+}
+/* IMPORTANT: don't let big containers block the player */
+.big-frame,
+.weeklyView,
+.view,
+.main-col {
+  pointer-events: auto;
+}
+.week-block{
+  border: 1px solid #000;
+  background:#fff;
+  padding: 20px;
+  margin-bottom:18px;
+  pointer-events: auto;
+}
+.week-label{
+  font-family:var(--sans);
+  font-size:22px;
+  font-weight:700;
+  margin:0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.week-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:20px 16px;
+}
+.card{
+  border: none;
+  background: transparent;
+  padding: 0;
+  display:grid;
+  grid-template-rows:auto 1fr;
+  gap:8px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.card:hover {
+  opacity: 0.7;
+}
+.thumb{
+  width:100%;
+  height:200px;
+  object-fit:contain;
+  border: none;
+  background: transparent;
+  display: block;
+}
+.card-meta{
+  display:grid;
+  gap:2px;
+}
+.card-title{
+  font-weight:700;
+  font-size:13px;
+  line-height: 1.3;
+}
+.card-sub{
+  font-size:11px;
+  opacity:.6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.card-notes{
+  font-size:11px;
+  opacity:.65;
+  font-style:italic;
+  margin-top:2px;
+  line-height: 1.4;
+}
+
+/* TOOLS WRAP (same “frame” feeling) */
+.tools-wrap{
+  border:2px solid var(--frame);
+  background:rgba(255,255,255,.35);
+  border-radius:6px;
+  height:calc(100vh - 18px - 40px - 10px - 14px - 18px);
+  padding:14px;
+
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+/* Tools tabs row */
+.tools-tabs{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  padding:2px 2px 14px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.tool-tab{
+  border:0;
+  background:transparent;
+  font-family:var(--sans);
+  font-size:13px;
+  color:#444;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:8px;
+  opacity:.7;
+}
+.tool-tab:hover{ background:rgba(0,0,0,.04); }
+.tool-tab.is-active{
+  opacity:1;
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+
+/* Tool pages */
+.tool-view{
+  display:none;
+  flex:1;
+  min-height:0;
+}
+.tool-view.is-active{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+.tools-header h1{
+  margin:0;
+  font-size:44px;
+  letter-spacing:.5px;
+  line-height:1;
+}
+.tools-sub{
+  margin:10px 0 16px;
+  font-size:13px;
+  opacity:.7;
+}
+
+.tools-grid{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns: 380px 1fr 1fr;
+  gap:24px;
+  align-items:stretch;
+}
+
+/* Panels */
+.panel{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+.panel-title{
+  font-family:var(--mono);
+  font-weight:700;
+  font-size:13px;
+  margin-bottom:10px;
+}
+.panel-title.mt{ margin-top:16px; }
+
+.field{
+  display:grid;
+  gap:4px;
+  margin:8px 0;
+  font-size:12px;
+}
+.field input[type="file"],
+.field select,
+.field input[type="date"]{ width:100%; }
+
+.field select,
+.field input[type="range"],
+.field input[type="date"]{
+  padding:8px;
+  border:1px solid var(--soft);
+  background:#fff;
+  border-radius:6px;
+  font-family:var(--sans);
+}
+.field input[type="range"]{ padding:0; }
+
+.btn{
+  width:100%;
+  padding:8px 12px;
+  border:1px solid #bcbcbc;
+  background:#f1f1f1;
+  border-radius:6px;
+  cursor:pointer;
+  font-family:var(--sans);
+  margin:2px 0;
+}
+.btn:hover{ background:#eaeaea; }
+.btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  background:#f8f8f8;
+}
+
+.hint{
+  margin-top:8px;
+  font-size:11px;
+  opacity:.7;
+  font-family:var(--mono);
+}
+
+.frame{
+  flex:1;
+  min-height:0;
+  position:relative;
+  border:1px dashed #ccc;
+  background:rgba(255,255,255,.35);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.frame-placeholder{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--mono);
+  font-size:12px;
+  opacity:.65;
+  pointer-events:none;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.cherub{
+  position:absolute;
+  inset:0;
+  margin:auto;
+  max-width:80%;
+  max-height:80%;
+  opacity:.25;
+  pointer-events:none;
+}
+
+/* INFO */
+.info-pad{
+  background:rgba(255,255,255,.65);
+  border:1px solid var(--soft);
+  padding:16px;
+}
+
+/* ABOUT SECTION */
+.about-container {
+  margin-bottom: 0;
+  max-width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.about-intro {
+  margin-bottom: 4px;
+  margin-top: 0;
+  text-align: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+
+.about-intro h2 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.about-intro p {
+  margin: 0;
+  line-height: 1.4;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Mac-style Camera Permission Popup */
+.camera-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.camera-popup-overlay.hidden {
+  display: none;
+}
+
+.camera-popup-window {
+  width: 420px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.camera-popup-body {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.popup-message {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.camera-choice-btn {
+  padding: 10px 20px;
+  font-size: 13px;
+  border: 2px solid #000;
+  background: #f1f1f1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.camera-choice-btn:hover {
+  background: #e0e0e0;
+}
+
+.popup-disclaimer {
+  margin: 0;
+  font-size: 10px;
+  opacity: 0.6;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Reopen Camera Settings Button */
+.reopen-camera-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  font-size: 11px;
+  border: 1px solid #000;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-weight: 600;
+  z-index: 20;
+  transition: background 0.2s ease;
+}
+
+.reopen-camera-btn:hover {
+  background: #f0f0f0;
+}
+
+/* Privacy Note */
+.privacy-note {
+  margin: 2px 0 4px;
+  text-align: center;
+}
+
+.privacy-note p {
+  margin: 0;
+  font-size: 10px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Brain Interactive Visualization */
+.brain-interactive {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* Brain Center (Image Container) */
+.brain-center {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  z-index: 10;
+}
+
+.brain-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Invisible Hover Zones */
+.brain-hover-zone {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 11;
+}
+
+.brain-hover-zone.left-zone {
+  left: 0;
+}
+
+.brain-hover-zone.right-zone {
+  right: 0;
+}
+
+/* Brain Panels (Base Styles) */
+.brain-panel {
+  position: absolute;
+  top: 50%;
+  width: 280px;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  z-index: 5;
+
+  /* Smooth transitions */
+  transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1),
+              opacity 0.5s ease;
+
+  /* Hidden by default */
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Left Panel: Hidden inside brain */
+.left-brain-panel {
+  left: 50%;
+  transform: translate(-100%, -50%) translateX(150px);
+}
+
+/* Right Panel: Hidden inside brain */
+.right-brain-panel {
+  right: 50%;
+  transform: translate(100%, -50%) translateX(-150px);
+}
+
+/* Left Panel: Visible when triggered */
+.brain-interactive.show-left .left-brain-panel {
+  transform: translate(-100%, -50%) translateX(-280px);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Right Panel: Visible when triggered */
+.brain-interactive.show-right .right-brain-panel {
+  transform: translate(100%, -50%) translateX(280px);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Brain Content Styling */
+.brain-content {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+}
+
+.brain-panel h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+
+.brain-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.brain-panel li {
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.brain-panel li:last-child {
+  margin-bottom: 0;
+}
+
+/* Arrow Styling */
+.brain-arrow {
+  width: 140px;
+  height: 70px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.4s ease 0.2s;
+}
+
+.left-arrow {
+  right: -140px;
+}
+
+.right-arrow {
+  left: -140px;
+}
+
+/* Show arrows when panels are visible */
+.brain-interactive.show-left .left-arrow,
+.brain-interactive.show-right .right-arrow {
+  opacity: 1;
+}
+
+/* Contact Section - Positioned bottom left */
+.contact-section {
+  position: static;
+  margin: 4px 0 0 0;
+  padding: 0;
+  border: none;
+  align-self: flex-start;
+}
+
+.contact-section h3 {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.contact-section p {
+  margin: 2px 0;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* Info Page Full Width */
+body.info-page .desktop {
+  grid-template-columns: 1fr;
+}
+
+body.info-page .main-col {
+  min-width: 0;
+}
+
+body.info-page .info-pad {
+  max-width: 100%;
+  margin: 0;
+  padding: 16px;
+  position: relative;
+  height: calc(100vh - 18px - 40px - 10px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  /* Brain Interactive - Mobile */
+  .brain-interactive {
+    flex-direction: column;
+    min-height: auto;
+    gap: 20px;
+  }
+
+  .brain-center {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .brain-image {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Hide hover zones on mobile */
+  .brain-hover-zone {
+    display: none;
+  }
+
+  /* Stack panels vertically below brain */
+  .brain-panel {
+    position: static;
+    width: 100%;
+    max-width: 400px;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+    margin-bottom: 16px;
+  }
+
+  /* Hide arrows on mobile */
+  .brain-arrow {
+    display: none;
+  }
+
+  .camera-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* TINY PLAYER (LOCKED LOOK) */
+.tiny-player{
+  position:fixed;
+  left:34px;
+  top:260px;
+  width:310px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  z-index:9999;
+  pointer-events: auto;
+  transform: none !important;
+}
+.tiny-header{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-bottom:1px solid var(--soft);
+  background:#fafafa;
+  user-select:none;
+  cursor: grab;
+  user-select: none;
+}
+.tiny-header:active {
+  cursor: grabbing;
+}
+.tiny-title{
+  margin-left:6px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:#444;
+  flex:1;
+}
+.tiny-close{
+  border:1px solid #cfcfcf;
+  background:#f4f4f4;
+  width:22px;
+  height:22px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  line-height:20px;
+}
+
+.tiny-body.tiny-spotify {
+  padding: 0;
+  background: #fff;
+}
+
+.tiny-body.tiny-spotify iframe {
+  width: 100%;
+  border: none;
+  display: block;
+}
+
+.tiny-body{ padding:12px; }
+.player-meta strong{ display:block; font-size:14px; }
+.player-meta div{ font-size:12px; opacity:.75; margin-top:2px; }
+.player-controls{ display:flex; justify-content:center; margin:10px 0 8px; }
+.play-btn{
+  width:42px;
+  height:34px;
+  border:1px solid #bcbcbc;
+  background:#f2f2f2;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:16px;
+}
+.player-scrub{
+  display:grid;
+  grid-template-columns: 42px 1fr 42px;
+  gap:10px;
+  align-items:center;
+  font-family:var(--mono);
+  font-size:12px;
+}
+.player-scrub input[type="range"]{ width:100%; }
+
+.tiny-player {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: auto;
+}
+
+/* Drag cursor */
+.drag-handle{ cursor:move; }
+
+/* Responsive-ish */
+@media (max-width: 1100px){
+  .desktop{ grid-template-columns: 1fr; }
+  .left-col{ display:none; }
+  .tiny-player{ left:18px; top:120px; }
+  .tools-grid{ grid-template-columns: 1fr; }
+  .frame{ height:320px; }
+}
+/* =========================
+   TOOLS PAGE OVERRIDES (tools.html only)
+   ========================= */
+body.tools-page .desktop{
+  grid-template-columns: 1fr;   /* full width, no left column */
+}
+
+body.tools-page .tools-shell{
+  /* same idea as your big-frame height but without forcing a border look */
+  height: calc(100vh - 18px - 40px - 10px - 14px - 18px);
+  /* padding to match your mock spacing */
+  padding: 14px;
+}
+
+/* tabs spacing like your mock */
+body.tools-page .tools-tabs{
+  display: flex;
+  gap: 24px;
+  margin-bottom: 14px;
+}
+
+/* IMPORTANT: tool-view must be able to fill height */
+body.tools-page .tool-view{
+  height: calc(100% - 40px);
+}
+
+/* IMPORTANT: tools-grid needs a real height so frames/canvas render */
+body.tools-page .tools-grid{
+  height: 100%;
+}
+
+/* frames must stretch */
+body.tools-page .frame{
+  height: 100%;
+  min-height: 360px; /* keeps it looking like your mock even on smaller screens */
+}
+/* ================================
+   TOOL TAB DIVIDER (BLACK LINE)
+================================ */
+.tools-tabs {
+  border-bottom: 2px solid #000;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+/* ================================
+   TOOL PANELS + FRAMES
+================================ */
+.panel,
+.frame {
+  border: 2px solid #000 !important;
+  border-radius: 0;
+}
+
+/* remove any dashed styles */
+.frame {
+  border-style: solid !important;
+}
+
+/* ================================
+   WEEKLY WONDER ID CARD
+================================ */
+#idCardCanvas {
+  background: #fff;
+}
+
+/* Taller ID card so image never crops */
+.id-card-portrait {
+  aspect-ratio: 3 / 5; /* taller than before */
+}
+
+/* ensure image is never cropped */
+.id-card-portrait img,
+#idPreviewCanvas,
+#idCardCanvas {
+  object-fit: contain !important;
+}
+/* =========================================
+   TOOLS — SHARED UNION STYLING
+========================================= */
+
+/* Tool tab divider (Cross stitch | ASCII | ID Me) */
+.tools-tabs {
+  border-bottom: 2px solid #000;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+.tiny-player {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: auto;
+}
+
+
+/* Each tool lives inside the same visual system */
+.tool-view {
+  border: 2px solid #000;
+  padding: 16px;
+}
+
+/* Panels inside tools */
+.tool-view .panel {
+  border: 2px solid #000;
+  border-radius: 0;
+}
+
+/* Frames (image + output areas) */
+.tool-view .frame {
+  border: 2px solid #000;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* Remove any dashed / grey leftovers */
+.tool-view .frame,
+.tool-view .panel {
+  border-style: solid !important;
+}
+
+/* Ensure canvases never crop */
+.tool-view canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+/* ===== FINAL CLICK + LAYER SAFETY (DO NOT DUPLICATE) ===== */
+
+/* tools page must allow clicks */
+body.tools-page .tools-shell,
+body.tools-page .tools-tabs,
+body.tools-page .tool-tab,
+body.tools-page .tool-view,
+body.tools-page .tools-grid,
+body.tools-page .panel,
+body.tools-page .frame {
+  position: relative;
+  z-index: 1;
+}
+
+/* tiny player always above */
+#tinyPlayer {
+  position: fixed;
+  z-index: 2147483647;
+  pointer-events: auto;
+}
+
+/* header always draggable/clickable */
+#tinyHeader {
+  position: relative;
+  z-index: 2147483647;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* === Moiré ASCII (index only) === */
+#moire-widget {
+  position: fixed !important;   /* force viewport positioning */
+  left: 18px;
+  width: 320px;                /* exact left column width */
+  top: 450px;                  /* positioned to show full content */
+  bottom: 0;                   /* extends to very bottom of viewport */
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;            /* clips content at container edges */
+}
+
+#moire-widget .moire-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  image-rendering: pixelated;
+}
+
+#moire-widget .moire {
+  opacity: 0.6;
+}

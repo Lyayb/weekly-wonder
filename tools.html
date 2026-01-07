@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Wonder — Tools</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="tools-page">
+  <div class="desktop tools-desktop">
+
+    <main class="main-col">
+      <div class="search-bar">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Search Weekly Wonder..." />
+      </div>
+
+      <nav class="top-nav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Weekly Wonder</a>
+        <a class="nav-link is-active" href="tools.html">Tools</a>
+        <a class="nav-link" href="info.html">Info / Contact</a>
+      </nav>
+
+      <section class="tools-shell">
+
+        <div class="tools-tabs" role="tablist" aria-label="Tools">
+          <button class="tool-tab is-active" data-tool="crossStitchTool" role="tab" aria-selected="true">Cross stitch</button>
+          <button class="tool-tab" data-tool="asciiTool" role="tab" aria-selected="false">ASCII</button>
+          <button class="tool-tab" data-tool="idTool" role="tab" aria-selected="false">ID Me</button>
+        </div>
+
+        <!-- CROSS STITCH -->
+        <section class="tool-view is-active" id="crossStitchTool" role="tabpanel">
+          <header class="tools-header">
+            <h1>CROSS STITCH GENERATOR</h1>
+            <p class="tools-sub">Upload image → generate → export</p>
+          </header>
+
+          <div class="tools-grid">
+            <div class="panel">
+              <div class="panel-title">Input</div>
+
+              <label class="field">
+                <span>Upload image</span>
+                <input id="imgInput" type="file" accept="image/*" />
+              </label>
+
+              <label class="field">
+                <span>Stitch density</span>
+                <select id="density">
+                  <option value="fine">Fine stitches</option>
+                  <option value="medium" selected>Medium stitches</option>
+                  <option value="chunky">Chunky stitches</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Threshold</span>
+                <input id="threshold" type="range" min="0" max="255" value="140" />
+              </label>
+
+              <label class="field">
+                <span>Grid lines</span>
+                <select id="gridLines">
+                  <option value="on" selected>On</option>
+                  <option value="off">Off</option>
+                </select>
+              </label>
+
+              <div class="panel-title mt">Output</div>
+
+              <label class="field">
+                <span>Export size</span>
+                <select id="exportSize">
+                  <option value="1200">Small journal</option>
+                  <option value="1600" selected>Medium journal</option>
+                  <option value="2000">Large journal</option>
+                </select>
+              </label>
+
+              <button id="exportBtn" class="btn" type="button">Export</button>
+              <div class="hint">Exports include a small "weeklywonder.org" watermark.</div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Image upload</div>
+              <div class="frame" id="crossPreviewFrame">
+                <img class="cherub" src="images/cherub.jpg" alt="" />
+                <canvas id="previewCanvas"></canvas>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Cross stitch</div>
+              <div class="frame" id="crossStitchFrame">
+                <canvas id="stitchCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ASCII -->
+        <section class="tool-view" id="asciiTool" role="tabpanel">
+          <header class="tools-header">
+            <h1>ASCII GENERATOR</h1>
+            <p class="tools-sub">Upload image or use webcam → render → export</p>
+          </header>
+
+          <div class="tools-grid">
+            <div class="panel">
+              <div class="panel-title">Controls</div>
+
+              <label class="field">
+                <span>Upload image</span>
+                <input id="asciiImgInput" type="file" accept="image/*" />
+              </label>
+
+              <button id="startWebcam" class="btn" type="button">Start webcam</button>
+              <button id="stopWebcam" class="btn" type="button">Stop webcam</button>
+              <button id="capturePhoto" class="btn" type="button">Capture</button>
+
+              <label class="field">
+                <span>Character spacing</span>
+                <input id="asciiScale" type="range" min="40" max="160" value="80" step="10" />
+              </label>
+
+              <label class="field">
+                <span>Image zoom</span>
+                <input id="asciiZoom" type="range" min="50" max="200" value="100" step="10" />
+              </label>
+
+              <label class="field">
+                <span>Export size</span>
+                <select id="asciiExportSize">
+                  <option value="igPost">Square</option>
+                  <option value="ig45" selected>Portrait</option>
+                  <option value="story">Story</option>
+                </select>
+              </label>
+
+              <button id="exportASCII" class="btn" type="button">Export</button>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Live input</div>
+              <div class="frame" id="asciiInputFrame">
+                <canvas id="asciiInputCanvas"></canvas>
+              </div>
+              <video id="asciiVideo" autoplay muted playsinline style="position:absolute; opacity:0; pointer-events:none; width:1px; height:1px;"></video>
+            </div>
+
+            <!-- ✅ RIGHT PANEL restored (was missing .panel wrapper in your version) -->
+            <div class="panel">
+              <div class="panel-title">ASCII output</div>
+              <div class="frame" id="asciiOutputFrame">
+                <canvas id="asciiOutCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ID ME -->
+        <section class="tool-view" id="idTool" role="tabpanel">
+          <header class="tools-header">
+            <h1>WEEKLY WONDER ID</h1>
+            <p class="tools-sub">Upload image → generate → export</p>
+          </header>
+
+          <div class="tools-grid">
+            <div class="panel">
+              <div class="panel-title">Input</div>
+
+              <label class="field">
+                <span>Upload image</span>
+                <input id="idImgInput" type="file" accept="image/*" />
+              </label>
+
+              <label class="field">
+                <span>Date of birth</span>
+                <input id="dobInput" type="date" />
+              </label>
+
+              <button id="generateID" class="btn" type="button">Generate ID</button>
+
+              <div class="panel-title mt">Output</div>
+              <label class="field">
+                <span>Export size</span>
+                <select id="idExportSize">
+                  <option value="igPost">IG Post (1:1)</option>
+                  <option value="ig45" selected>IG Post (4:5)</option>
+                  <option value="story">Story / Reel / TikTok (9:16)</option>
+                  <option value="land">Landscape (16:9)</option>
+                </select>
+              </label>
+
+              <button id="exportID" class="btn" type="button">Export</button>
+              <div class="hint">Exports include a small "weeklywonder.org" watermark.</div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Image upload</div>
+              <div class="frame" id="idPreviewFrame">
+                <canvas id="idPreviewCanvas"></canvas>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Weekly Wonder ID</div>
+              <div class="frame" id="idCardFrame">
+                <canvas id="idCardCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </section>
+    </main>
+
+    <!-- Tiny Player (unchanged look) -->
+    <section class="tiny-player" id="tinyPlayer" aria-label="Tiny Player">
+      <div class="tiny-header drag-handle" id="tinyHeader">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="tiny-title">Tiny Player</span>
+        <button class="tiny-close" id="closePlayer" aria-label="Close">×</button>
+      </div>
+
+      <div class="tiny-body tiny-spotify">
+        <iframe
+          id="spotifyFrame"
+          src="https://open.spotify.com/embed/playlist/02AUgwn97fU0N7oasxqzr0?utm_source=generator&theme=0"
+          width="100%"
+          height="120"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="tools.js"></script>
+</body>
+</html>

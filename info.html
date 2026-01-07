@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Info / Contact — Weekly Wonder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="info-page">
+  <div class="desktop">
+    <!-- MAIN COLUMN -->
+    <main class="main-col" style="width: 100%; max-width: none;">
+      <!-- SEARCH BAR -->
+      <div class="search-bar">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Search Weekly Wonder..." />
+      </div>
+
+      <!-- TOP NAV -->
+      <nav class="top-nav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Weekly Wonder</a>
+        <a class="nav-link" href="tools.html">Tools</a>
+        <a class="nav-link is-active" href="info.html">Info / Contact</a>
+      </nav>
+
+      <!-- INFO VIEW -->
+      <section class="view is-active" id="infoView">
+        <div class="big-frame">
+          <div class="scroll-area">
+            <div class="info-pad">
+
+            <!-- About Section -->
+            <div class="about-container" data-emphasis="off">
+
+              <!-- Mac-style Camera Permission Popup -->
+              <div class="camera-popup-overlay" id="cameraPopup">
+                <div class="camera-popup-window">
+                  <div class="window-header drag-handle">
+                    <span class="dot red" id="closePopup"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="window-title">Camera permissions</span>
+                  </div>
+                  <div class="window-body camera-popup-body">
+                    <p class="popup-message">Camera enables interactive features.<br>
+                    Wave left or right hand to find out<br>
+                    or just use mouse controls.<br>
+                    The option is yours.</p>
+
+                    <div class="popup-buttons">
+                      <button id="enableCameraBtn" class="btn camera-choice-btn">Enable Camera</button>
+                      <button id="disableCameraBtn" class="btn camera-choice-btn">Camera off</button>
+                    </div>
+
+                    <p class="popup-disclaimer">Runs locally in your browser. Nothing is recorded or stored. You can keep camera off.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Small button to reopen popup (hidden initially) -->
+              <button id="reopenPopup" class="reopen-camera-btn" style="display: none;">
+                Camera Settings
+              </button>
+
+              <!-- Intro (Centered at top) -->
+              <div class="about-intro">
+                <p>I'm Gabriella — a creative technologist / digital marketer who treats the internet like a living scrapbook. Weekly Wonder is where I collect what I'm watching, reading, listening to, and building while I teach myself new tools. I like systems and I like mess. Both are true.</p>
+              </div>
+
+              <!-- Privacy Note -->
+              <div class="privacy-note">
+                <p><small>Runs locally in your browser. Nothing is recorded or stored. You can keep camera off.</small></p>
+              </div>
+
+              <!-- Interactive Brain Visualization -->
+              <div class="brain-interactive">
+
+                <!-- Brain Image (Centered) -->
+                <div class="brain-center">
+                  <img src="images/brain.png" alt="Brain diagram" class="brain-image" />
+
+                  <!-- Invisible hover zones for mouse interaction -->
+                  <div class="brain-hover-zone left-zone" data-zone="left"></div>
+                  <div class="brain-hover-zone right-zone" data-zone="right"></div>
+                </div>
+
+                <!-- Left Brain Panel (Hidden by default, slides from center-left) -->
+                <div class="brain-panel left-brain-panel">
+                  <svg class="brain-arrow left-arrow" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 5 25 Q 30 10, 95 25" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 85 18 L 95 25 L 85 32" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <div class="brain-content">
+                    <h3 style="color: #00BFFF;">Left Brain</h3>
+                    <ul>
+                      <li><strong>builds:</strong> p5.js experiments, small web tools, interactive layouts</li>
+                      <li><strong>workflow:</strong> structure, iteration, clean UI constraints</li>
+                      <li><strong>interests:</strong> creative coding, prototyping, systems thinking</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Right Brain Panel (Hidden by default, slides from center-right) -->
+                <div class="brain-panel right-brain-panel">
+                  <div class="brain-content">
+                    <h3 style="color: #FF69B4;">Right Brain</h3>
+                    <ul>
+                      <li><strong>taste:</strong> indie/alt/punk, 90s nostalgia, editorial obsession</li>
+                      <li><strong>practices:</strong> archiving, reference libraries, media recaps</li>
+                      <li><strong>interests:</strong> storytelling, visuals, mood, playful internet ephemera</li>
+                    </ul>
+                  </div>
+                  <svg class="brain-arrow right-arrow" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 95 25 Q 70 10, 5 25" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 15 18 L 5 25 L 15 32" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+
+              </div>
+
+              <!-- Contact Info (Bottom Left of brain area) -->
+              <div class="contact-section">
+                <h3>Contact</h3>
+                <p><strong>Email:</strong> lyayb99@gmail.com</p>
+                <p><strong>Instagram:</strong> @lyayb</p>
+              </div>
+
+            </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Tiny Player (Spotify Embed, Global) -->
+    <section class="tiny-player" id="tinyPlayer" aria-label="Tiny Player">
+      <div class="tiny-header drag-handle" id="tinyHeader">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="tiny-title">Tiny Player</span>
+        <button class="tiny-close" id="closePlayer" aria-label="Close">×</button>
+      </div>
+
+      <div class="tiny-body tiny-spotify">
+        <iframe
+          id="spotifyFrame"
+          src="https://open.spotify.com/embed/playlist/02AUgwn97fU0N7oasxqzr0?utm_source=generator&theme=0"
+          width="100%"
+          height="120"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Hidden video for MediaPipe -->
+  <video id="cameraVideo" style="position:absolute; opacity:0; pointer-events:none; width:1px; height:1px;"></video>
+
+  <!-- MediaPipe Hands CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+  <!-- Tiny Player Drag (from weekly-feed.js) -->
+  <script>
+    const tinyPlayer = document.getElementById("tinyPlayer");
+    const tinyHeader = document.getElementById("tinyHeader");
+
+    if (tinyPlayer && tinyHeader) {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+
+      tinyHeader.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX - tinyPlayer.offsetLeft;
+        startY = e.clientY - tinyPlayer.offsetTop;
+        document.body.style.userSelect = "none";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        tinyPlayer.style.left = e.clientX - startX + "px";
+        tinyPlayer.style.top = e.clientY - startY + "px";
+      });
+
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "";
+      });
+    }
+  </script>
+
+  <!-- Camera Popup Logic -->
+  <script>
+    // Camera popup show/hide logic
+    (function() {
+      const popup = document.getElementById('cameraPopup');
+      const closeBtn = document.getElementById('closePopup');
+      const enableBtn = document.getElementById('enableCameraBtn');
+      const disableBtn = document.getElementById('disableCameraBtn');
+      const reopenBtn = document.getElementById('reopenPopup');
+
+      // Check if user has made a choice before
+      const cameraChoice = localStorage.getItem('cameraChoice');
+
+      if (cameraChoice) {
+        // User has made a choice before, hide popup and show reopen button
+        popup.classList.add('hidden');
+        reopenBtn.style.display = 'block';
+      }
+
+      // Close popup (red X button)
+      closeBtn.addEventListener('click', () => {
+        popup.classList.add('hidden');
+        reopenBtn.style.display = 'block';
+      });
+
+      // Reopen popup
+      reopenBtn.addEventListener('click', () => {
+        popup.classList.remove('hidden');
+        reopenBtn.style.display = 'none';
+      });
+
+      // Enable camera button
+      enableBtn.addEventListener('click', () => {
+        localStorage.setItem('cameraChoice', 'enabled');
+        popup.classList.add('hidden');
+        reopenBtn.style.display = 'block';
+        // Trigger camera enable (will be handled by MediaPipe script)
+        window.dispatchEvent(new CustomEvent('enableCamera'));
+      });
+
+      // Disable camera button
+      disableBtn.addEventListener('click', () => {
+        localStorage.setItem('cameraChoice', 'disabled');
+        popup.classList.add('hidden');
+        reopenBtn.style.display = 'block';
+        // Trigger camera disable (will be handled by MediaPipe script)
+        window.dispatchEvent(new CustomEvent('disableCamera'));
+      });
+    })();
+  </script>
+
+  <!-- MediaPipe Hand Detection Logic -->
+  <script src="info-mediapipe.js"></script>
+</body>
+</html>

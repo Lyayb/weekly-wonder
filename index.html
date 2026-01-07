@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Wonder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="desktop">
+    <!-- LEFT COLUMN (only visible on Weekly Wonder) -->
+    <aside class="left-col" id="leftCol">
+      <!-- about.txt window -->
+      <section class="window about-window" id="aboutWindow">
+        <div class="window-header drag-handle">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="window-title">about.txt</span>
+        </div>
+        <div class="window-body">
+<pre class="about-text">artist / creative technologist / collector of curiosities
+
+Weekly Wonder and Whiplash archives music, films, writing
+whatever grabs my attention
+
+I'm trying to bring back the internet that felt fun
+and wasn't just about consumption
+
+Explore, play around
+more will get added as I go</pre>
+        </div>
+      </section>
+    </aside>
+
+    <!-- MAIN COLUMN -->
+    <main class="main-col">
+      <!-- SEARCH BAR -->
+      <div class="search-bar">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Search Weekly Wonder..." />
+      </div>
+
+      <!-- TOP NAV (locked structure) -->
+      <nav class="top-nav" aria-label="Primary">
+  <a class="nav-link is-active" href="index.html">Weekly Wonder</a>
+  <a class="nav-link" href="tools.html">Tools</a>
+  <a class="nav-link" href="info.html">Info / Contact</a>
+</nav>
+
+
+
+      <!-- WEEKLY WONDER VIEW -->
+      <section class="view is-active" id="weeklyView">
+        <div class="big-frame">
+          <div class="scroll-area">
+  <div id="weekly-feed"></div>
+</div>
+
+
+
+          </div>
+        </div>
+      </section>
+
+      <!-- TOOLS VIEW -->
+      <section class="view" id="toolsView">
+        <div class="tools-wrap">
+
+          <!-- TOOLS TABS -->
+          <div class="tools-tabs" role="tablist" aria-label="Tools">
+            <button class="tool-tab is-active" data-tool="crossStitchTool" role="tab" aria-selected="true">Cross stitch</button>
+            <button class="tool-tab" data-tool="asciiTool" role="tab" aria-selected="false">ASCII</button>
+            <button class="tool-tab" data-tool="idTool" role="tab" aria-selected="false">ID Me</button>
+          </div>
+
+          <!-- CROSS STITCH -->
+          <section class="tool-view is-active" id="crossStitchTool" role="tabpanel">
+            <header class="tools-header">
+              <h1>CROSS STITCH GENERATOR</h1>
+              <p class="tools-sub">Upload image → generate → export</p>
+            </header>
+
+            <div class="tools-grid">
+              <!-- LEFT -->
+              <div class="panel">
+                <div class="panel-title">Input</div>
+
+                <label class="field">
+                  <span>Upload image</span>
+                  <input id="imgInput" type="file" accept="image/*" />
+                </label>
+
+                <label class="field">
+                  <span>Stitch density</span>
+                  <select id="density">
+                    <option value="fine">Fine stitches</option>
+                    <option value="medium" selected>Medium stitches</option>
+                    <option value="chunky">Chunky stitches</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Threshold</span>
+                  <input id="threshold" type="range" min="0" max="255" value="140" />
+                </label>
+
+                <label class="field">
+                  <span>Grid lines</span>
+                  <select id="gridLines">
+                    <option value="on" selected>On</option>
+                    <option value="off">Off</option>
+                  </select>
+                </label>
+
+                <div class="panel-title mt">Output</div>
+
+                <label class="field">
+                  <span>Export size</span>
+                  <select id="exportSize">
+                    <option value="1200">Small journal</option>
+                    <option value="1600" selected>Medium journal</option>
+                    <option value="2000">Large journal</option>
+                  </select>
+                </label>
+
+                <button id="exportBtn" class="btn" type="button">Export</button>
+                <div class="hint">Exports include a small "weeklywonder.org" watermark.</div>
+              </div>
+
+              <!-- CENTER -->
+              <div class="panel">
+                <div class="panel-title">Preview</div>
+                <div class="frame">
+                  <img class="cherub" src="images/cherub.jpg" alt="" />
+                  <canvas id="previewCanvas"></canvas>
+                </div>
+              </div>
+
+              <!-- RIGHT -->
+              <div class="panel">
+                <div class="panel-title">Cross stitch</div>
+                <div class="frame">
+                  <canvas id="stitchCanvas"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ASCII -->
+          <section class="tool-view" id="asciiTool" role="tabpanel">
+            <header class="tools-header">
+              <h1>ASCII RENDERER</h1>
+              <p class="tools-sub">Coming soon.</p>
+            </header>
+
+            <div class="tools-grid">
+              <div class="panel">
+                <div class="panel-title">Input</div>
+                <div class="tools-placeholder">Coming soon.</div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">Preview</div>
+                <div class="frame"><div class="frame-placeholder">—</div></div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">Output</div>
+                <div class="frame"><div class="frame-placeholder">—</div></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ID ME -->
+          <section class="tool-view" id="idTool" role="tabpanel">
+            <header class="tools-header">
+              <h1>WEEKLY WONDER ID</h1>
+              <p class="tools-sub">Upload image → generate → export</p>
+            </header>
+
+            <div class="tools-grid">
+              <!-- LEFT -->
+              <div class="panel">
+                <div class="panel-title">Input</div>
+
+                <label class="field">
+                  <span>Upload image</span>
+                  <input id="idImgInput" type="file" accept="image/*" />
+                </label>
+
+                <label class="field">
+                  <span>Date of birth</span>
+                  <input id="dobInput" type="date" />
+                </label>
+
+                <label class="field">
+                  <span>Background removal</span>
+                  <select id="bgMode">
+                    <option value="none" selected>None</option>
+                    <option value="white">Remove near-white</option>
+                  </select>
+                </label>
+
+                <button id="generateID" class="btn" type="button">Generate ID</button>
+
+                <div class="panel-title mt">Output</div>
+
+                <label class="field">
+                  <span>Export size</span>
+                  <select id="idExportSize">
+                    <option value="1200">Small journal</option>
+                    <option value="1600" selected>Medium journal</option>
+                    <option value="2000">Large journal</option>
+                  </select>
+                </label>
+
+                <button id="exportID" class="btn" type="button">Export</button>
+                <div class="hint">Exports include a small "weeklywonder.org" watermark.</div>
+              </div>
+
+              <!-- CENTER -->
+              <div class="panel">
+                <div class="panel-title">Image upload</div>
+                <div class="frame">
+                  <canvas id="idPreviewCanvas"></canvas>
+                </div>
+              </div>
+
+              <!-- RIGHT -->
+              <div class="panel">
+                <div class="panel-title">Weekly Wonder ID</div>
+                <div class="frame">
+                  <canvas id="idCardCanvas"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </section>
+
+      <!-- INFO / CONTACT VIEW -->
+      <section class="view" id="infoView">
+        <div class="big-frame">
+          <div class="info-pad">
+            <h2>Info / Contact</h2>
+            <p>We’ll build this next (and later: optional MediaPipe left-hand vs right-hand states).</p>
+            <p><strong>Email:</strong> your@email.com</p>
+            <p><strong>Instagram:</strong> @yourhandle</p>
+          </div>
+        </div>
+      </section>
+    </main>
+<!-- Tiny Player (Spotify Embed, Global) -->
+<section class="tiny-player" id="tinyPlayer" aria-label="Tiny Player">
+  <div class="tiny-header drag-handle" id="tinyHeader">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+    <span class="tiny-title">Tiny Player</span>
+    <button class="tiny-close" id="closePlayer" aria-label="Close">×</button>
+  </div>
+
+  <div class="tiny-body tiny-spotify">
+    <iframe
+      id="spotifyFrame"
+      src="https://open.spotify.com/embed/playlist/02AUgwn97fU0N7oasxqzr0?utm_source=generator&theme=0"
+      width="100%"
+      height="120"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
+</section>
+<script src="weekly-feed.js"></script>
+
+<!-- Moiré ASCII widget (index only) -->
+<div id="moire-widget" class="moire-positioned" aria-hidden="true">
+  <img src="images/ascii-me.png" class="moire-img base" alt="">
+  <img src="images/ascii-me-2.png" class="moire-img moire" alt="">
+</div>
+
+<script src="moire.js"></script>
+
+</body>
+<html>
