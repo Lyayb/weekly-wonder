@@ -10,16 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
    Tool tab switching
 ------------------------- */
 function initToolTabs() {
-  const tabs = Array.from(document.querySelectorAll(".tool-tab"));
   const views = Array.from(document.querySelectorAll(".tool-view"));
-  if (!tabs.length || !views.length) return;
+  if (!views.length) return;
 
   function activate(id) {
-    tabs.forEach(t => {
-      const on = t.dataset.tool === id;
-      t.classList.toggle("is-active", on);
-      t.setAttribute("aria-selected", on ? "true" : "false");
-    });
     views.forEach(v => v.classList.toggle("is-active", v.id === id));
 
     // important for canvases - trigger resize after tab switch
@@ -30,8 +24,25 @@ function initToolTabs() {
     });
   }
 
-  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tool)));
-  activate(tabs[0]?.dataset.tool || "crossStitchTool");
+  // Handle URL hash to switch tools on page load
+  function handleHash() {
+    const hash = window.location.hash.slice(1); // Remove #
+    if (hash === "crossStitch") {
+      activate("crossStitchTool");
+    } else if (hash === "ascii") {
+      activate("asciiTool");
+    } else if (hash === "idMe") {
+      activate("idTool");
+    } else {
+      activate("crossStitchTool"); // Default
+    }
+  }
+
+  // Listen for hash changes
+  window.addEventListener("hashchange", handleHash);
+
+  // Check hash on page load
+  handleHash();
 }
 
 /* -------------------------
