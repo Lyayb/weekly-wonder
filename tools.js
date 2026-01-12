@@ -372,11 +372,7 @@ function initIDTool() {
     octx.fillText(`REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`, pad, infoStartY + lineHeight * 4);
     octx.fillText(`AID: ${randDigits(12)}`, pad, infoStartY + lineHeight * 5);
     octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, pad, infoStartY + lineHeight * 6);
-
-    // Watermark
-    octx.font = `${Math.floor(exportWidth * 0.018)}px ui-monospace, Menlo, Monaco`;
-    octx.fillStyle = "rgba(0,0,0,0.5)";
-    octx.fillText("weeklywonder.org", pad, exportHeight - pad * 0.5);
+    octx.fillText(`WEEKLYWONDER.ORG`, pad, infoStartY + lineHeight * 7);
 
     downloadCanvas(out, "weeklywonder-id.png");
   });
