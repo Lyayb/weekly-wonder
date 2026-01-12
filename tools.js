@@ -272,10 +272,19 @@ function initIDTool() {
     return { width, height };
   }
 
+  // Track if card has been rendered
+  let cardRendered = false;
+
   function resizeAll() {
     fitCanvas(previewCanvas);
     fitCanvas(cardCanvas);
-    if (img) drawPreview();
+    if (img) {
+      drawPreview();
+      // Re-render card if it was already rendered
+      if (cardRendered) {
+        renderCard();
+      }
+    }
   }
 
   window.addEventListener("resize", resizeAll);
@@ -439,9 +448,6 @@ function initIDTool() {
 
     downloadCanvas(out, "weeklywonder-id.png");
   });
-
-  // Track if card has been rendered
-  let cardRendered = false;
 
   function renderCard() {
     // Use proper dimensions from styled canvas
