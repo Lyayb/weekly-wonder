@@ -364,15 +364,26 @@ function initIDTool() {
     const lineHeight = exportWidth * 0.035;
 
     octx.font = `${Math.floor(exportWidth * 0.022)}px ui-monospace, Menlo, Monaco`;
+
+    // Left column
+    octx.textAlign = "left";
     octx.fillText(`DOB: ${dob}`, pad, infoStartY);
     octx.fillText(`SIGN: ${zodiacSign(new Date(dob))}`, pad, infoStartY + lineHeight);
     octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, pad, infoStartY + lineHeight * 2);
     octx.fillText(`TIME: ${now.toTimeString().slice(0,8)}`, pad, infoStartY + lineHeight * 3);
-
     octx.fillText(`REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`, pad, infoStartY + lineHeight * 4);
     octx.fillText(`AID: ${randDigits(12)}`, pad, infoStartY + lineHeight * 5);
     octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, pad, infoStartY + lineHeight * 6);
     octx.fillText(`WEEKLYWONDER.ORG`, pad, infoStartY + lineHeight * 7);
+
+    // Right column
+    octx.textAlign = "right";
+    const xRight = exportWidth - pad;
+    octx.fillText(`K/${randDigits(4)}${randBlock(1, 3).toUpperCase()}${randDigits(6)}`, xRight, infoStartY);
+    octx.fillText(`${randDigits(14)}`, xRight, infoStartY + lineHeight);
+    octx.fillText(`A${randDigits(13)}`, xRight, infoStartY + lineHeight * 2);
+    octx.fillText(`${randDigits(10)}`, xRight, infoStartY + lineHeight * 3);
+    octx.fillText(`${randDigits(4)}`, xRight, infoStartY + lineHeight * 4);
 
     downloadCanvas(out, "weeklywonder-id.png");
   });
@@ -421,7 +432,7 @@ function initIDTool() {
     const dateStr = now.toISOString().slice(0, 10);
     const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-    const lines = [
+    const leftLines = [
       `DOB: ${dobStr}`,
       `SIGN: ${sign}`,
       `DATE: ${dateStr}`,
@@ -432,23 +443,42 @@ function initIDTool() {
       `WEEKLYWONDER.ORG`,
     ];
 
+    const rightLines = [
+      `K/${randDigits(4)}${randBlock(1, 3).toUpperCase()}${randDigits(6)}`,
+      `${randDigits(14)}`,
+      `A${randDigits(13)}`,
+      `${randDigits(10)}`,
+      `${randDigits(4)}`,
+    ];
+
     cctx.fillStyle = "#000";
     // Scale font size based on canvas width
     const fontSize = Math.max(10, Math.floor(w * 0.026));
     cctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
-    cctx.textAlign = "left";
 
     // Text starts directly below photo
     const textStartY = pad + photoH + pad * 0.8;
     const textAreaHeight = h - textStartY - pad;
-    const lineSpacing = Math.min(18, Math.floor(textAreaHeight / (lines.length + 1)));
+    const lineSpacing = Math.min(18, Math.floor(textAreaHeight / (leftLines.length + 1)));
 
+    // Draw left column
+    cctx.textAlign = "left";
     let y = textStartY;
-    const x = pad + Math.floor(w * 0.028);
-    for (const line of lines) {
-      cctx.fillText(line, x, y);
+    const xLeft = pad + Math.floor(w * 0.028);
+    for (const line of leftLines) {
+      cctx.fillText(line, xLeft, y);
       y += lineSpacing;
     }
+
+    // Draw right column (aligned under right side of photo)
+    cctx.textAlign = "right";
+    let yRight = textStartY;
+    const xRight = w - pad - Math.floor(w * 0.028);
+    for (const line of rightLines) {
+      cctx.fillText(line, xRight, yRight);
+      yRight += lineSpacing;
+    }
+
     cardRendered = true;
   }
 
