@@ -35,7 +35,7 @@
                  script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;
                  style-src 'self' 'unsafe-inline';
                  img-src 'self' data: blob: https:;
-                 frame-src https://open.spotify.com;
+                 frame-src https://open.spotify.com https://www.youtube.com;
                  connect-src 'self';
                  media-src 'self' blob:;">
   <meta name="referrer" content="no-referrer">
@@ -192,6 +192,22 @@
 
             </div>
 
+          </section>
+
+          <!-- SECTION 3: YOUTUBE VIDEO -->
+          <section class="info-video-section">
+            <div class="video-box">
+              <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/I1zd6Gt5O_I?si=fWXB6bdrHWBPqwnM"
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+              </iframe>
+            </div>
           </section>
 
         </div>
