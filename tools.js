@@ -299,9 +299,11 @@ function initIDTool() {
         generateBtn.disabled = true;
         generateBtn.textContent = "Removing background...";
 
-        // Use background removal library
-        if (typeof removeBackground !== 'undefined') {
-          const blob = await removeBackground(img.src);
+        // Check if library is loaded from window object
+        const bgRemoval = window.removeBackground || window.imglyRemoveBackground;
+
+        if (bgRemoval) {
+          const blob = await bgRemoval(img.src);
           const url = URL.createObjectURL(blob);
 
           const processedImage = new Image();
@@ -311,16 +313,23 @@ function initIDTool() {
             generateBtn.disabled = false;
             generateBtn.textContent = "Generate ID";
           };
+          processedImage.onerror = () => {
+            console.error("Failed to load processed image");
+            renderCard();
+            generateBtn.disabled = false;
+            generateBtn.textContent = "Generate ID";
+          };
           processedImage.src = url;
         } else {
           // Fallback if library not loaded
-          console.warn("Background removal library not loaded");
+          alert("Background removal library not loaded. Please refresh the page or use 'None' mode.");
           renderCard();
           generateBtn.disabled = false;
           generateBtn.textContent = "Generate ID";
         }
       } catch (err) {
         console.error("Background removal failed:", err);
+        alert("Background removal failed: " + err.message);
         renderCard();
         generateBtn.disabled = false;
         generateBtn.textContent = "Generate ID";

@@ -2254,6 +2254,11 @@ body.tools-page .frame{
   height: 100%;
   min-height: 360px; /* keeps it looking like your mock even on smaller screens */
 }
+
+/* ID tool canvas needs more height for portrait orientation */
+body.tools-page #idTool .panel:nth-child(3) .frame {
+  min-height: 500px;
+}
 /* ================================
    TOOL TAB DIVIDER (BLACK LINE)
 ================================ */

@@ -36,8 +36,9 @@
                  style-src 'self' 'unsafe-inline';
                  img-src 'self' data: blob: https:;
                  frame-src https://open.spotify.com;
-                 connect-src 'self' https://docs.google.com https://*.google.com https://*.googleusercontent.com https://vitals.vercel-insights.com;
-                 media-src 'self' blob:;">
+                 connect-src 'self' https://docs.google.com https://*.google.com https://*.googleusercontent.com https://vitals.vercel-insights.com https://cdn.jsdelivr.net;
+                 media-src 'self' blob:;
+                 worker-src 'self' blob:;">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
