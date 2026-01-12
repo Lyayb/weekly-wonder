@@ -1591,16 +1591,44 @@ body.info-page .info-pad {
 
 /* Mobile phones */
 @media (max-width: 768px) {
+  /* Remove outer padding on mobile */
+  .desktop {
+    padding: 0 !important;
+    gap: 0;
+    height: 100vh;
+  }
+
+  .main-col {
+    padding: 16px;
+    padding-bottom: 0;
+  }
+
+  /* Search bar - rounded, clean */
+  .search-bar {
+    height: 44px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 22px;
+  }
+
+  .search-bar input {
+    font-size: 14px;
+  }
+
   /* Navigation */
   .top-nav {
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 12px;
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding: 0 0 12px 0;
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 16px;
   }
 
   .nav-link {
-    font-size: 14px;
-    padding: 8px 12px;
+    font-size: 13px;
+    padding: 6px 0;
+    white-space: nowrap;
   }
 
   .tools-dropdown {
@@ -1609,23 +1637,72 @@ body.info-page .info-pad {
     min-width: 150px;
   }
 
-  /* Search bar */
-  .search-bar {
-    padding: 10px;
+  /* Mac Window - full width, minimal chrome */
+  .mac-window {
+    border-radius: 12px;
+    height: auto;
+    min-height: auto;
+    border: 1px solid #d0d0d0;
   }
 
-  .search-bar input {
-    font-size: 14px;
+  .mac-header {
+    padding: 8px 12px;
   }
 
-  /* Weekly Wonder cards */
+  .mac-body {
+    padding: 20px 16px 60px 16px;
+  }
+
+  /* Week blocks */
+  .week-block {
+    margin-bottom: 24px;
+  }
+
+  .week-label {
+    font-size: 11px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  /* Weekly Wonder cards - single column */
   .week-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px;
+    display: flex !important;
+    flex-direction: column;
+    gap: 0;
+    overflow-x: visible;
+    padding-bottom: 0;
   }
 
   .card {
+    flex: none;
     max-width: 100%;
+    border-radius: 0;
+    margin-bottom: 24px;
+  }
+
+  .thumb {
+    height: 240px;
+    border-radius: 0;
+  }
+
+  .card-meta {
+    padding: 12px 0;
+  }
+
+  .card-sub {
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .card-notes {
+    font-size: 11px;
+    line-height: 1.6;
   }
 
   /* Moire widget - show at bottom of Weekly Wonder page on mobile */
