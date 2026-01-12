@@ -1968,27 +1968,49 @@ body.info-page .info-pad {
     display: none !important;
   }
 
-  /* Info page */
-  .hero-boxes {
-    grid-template-columns: 1fr !important;
-    gap: 24px;
+  /* Info page mobile layout - matches Canva mockup */
+  .info-hero-section {
+    min-height: auto;
+    padding: 0;
+    margin-bottom: 24px;
   }
 
-  .hero-box {
-    min-height: 300px;
+  .hero-title {
+    font-size: 32px;
+    margin-bottom: 24px;
+    padding: 0 16px;
+  }
+
+  /* SECTION 1: VIDEO + ABOUT TEXT stacked vertically */
+  .hero-boxes {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  /* Video box - first, full width */
+  .hero-box-left {
+    order: 1;
+    min-height: 350px !important;
+    border-radius: 12px !important;
+    padding: 0 !important;
+  }
+
+  /* About text box - second, full width */
+  .hero-box-right {
+    order: 2;
+    min-height: auto !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
   }
 
   .hero-box-right p {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.7;
   }
 
-  .interactive-left,
-  .interactive-right {
-    width: 100%;
-  }
-
-  /* Hide video controls on mobile - videos play continuously */
+  /* Hide video controls on mobile */
   .hero-video::-webkit-media-controls {
     display: none !important;
   }
@@ -1997,50 +2019,136 @@ body.info-page .info-pad {
     display: none !important;
   }
 
-  /* Moire effect - visible on mobile Info page */
-  .moire-effect-info {
-    display: block;
-    margin-bottom: 24px;
+  /* SECTION 2: MOIRE/CONTACTS + INTERACTIVE BOX side by side */
+  .info-interactive-section {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+    padding: 0 16px 40px 16px !important;
+    align-items: start !important;
   }
 
-  /* Contact circles - horizontal layout under moire */
+  /* Left column: Camera button + Moire + Contact circles stacked */
+  .interactive-left {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  /* Camera button - smaller on mobile */
+  .reopen-camera-btn-new {
+    font-size: 9px;
+    padding: 6px 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Moire effect - responsive size */
+  .moire-effect-info {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+    margin: 0 !important;
+  }
+
+  /* Contact circles - VERTICAL stack under moire */
   .contact-circles {
-    flex-direction: row;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 16px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin: 0 !important;
   }
 
   .contact-circle {
-    width: 90px;
-    height: 90px;
-    font-size: 13px;
+    width: 100% !important;
+    height: 50px !important;
+    border-radius: 25px !important;
+    font-size: 11px !important;
+    border: 2px solid #000;
   }
 
-  /* Carousel/Folder - shorter height on mobile */
+  /* Right column: Interactive brain box */
+  .interactive-right {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
   .brain-box {
-    min-height: 280px;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 400px !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .brain-title {
+    font-size: 14px !important;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* Folder image - centered and sized */
+  .folder-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .folder-image {
-    max-width: 200px;
+    max-width: 120px !important;
+    height: auto;
+  }
+
+  /* Carousel - responsive sizing */
+  .carousel-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
 
   .carousel-orbit {
-    width: 280px;
-    height: 280px;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 250px;
+    max-height: 250px;
+    position: relative;
+  }
+
+  .carousel-item {
+    position: absolute;
   }
 
   .carousel-item img {
-    max-width: 120px;
-    max-height: 120px;
+    max-width: 80px !important;
+    max-height: 80px !important;
+  }
+
+  .carousel-item.highlighted img {
+    max-width: 120px !important;
+    max-height: 120px !important;
+  }
+
+  /* Item label styling on mobile */
+  .item-label {
+    font-size: 9px !important;
+    padding: 4px 8px;
+    max-width: 140px;
   }
 }
 
 /* Small mobile phones */
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .week-label {
@@ -2060,14 +2168,45 @@ body.info-page .info-pad {
     width: 260px !important;
   }
 
-  .contact-circle {
-    width: 70px;
-    height: 70px;
-    font-size: 11px;
+  /* Info page adjustments for small screens */
+  .hero-box-left {
+    min-height: 280px !important;
   }
 
-  .hero-box {
-    min-height: 250px;
+  .hero-box-right {
+    padding: 20px !important;
+  }
+
+  .hero-box-right p {
+    font-size: 12px;
+  }
+
+  .brain-box {
+    min-height: 350px !important;
+    padding: 16px !important;
+  }
+
+  .brain-title {
+    font-size: 12px !important;
+  }
+
+  .folder-image {
+    max-width: 100px !important;
+  }
+
+  .carousel-orbit {
+    max-width: 200px !important;
+    max-height: 200px !important;
+  }
+
+  .carousel-item img {
+    max-width: 60px !important;
+    max-height: 60px !important;
+  }
+
+  .contact-circle {
+    height: 45px !important;
+    font-size: 10px !important;
   }
 }
 /* =========================
