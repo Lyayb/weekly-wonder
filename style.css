@@ -1664,29 +1664,31 @@ body.info-page .info-pad {
     letter-spacing: 1px;
   }
 
-  /* Weekly Wonder cards - single column */
+  /* Weekly Wonder cards - KEEP HORIZONTAL SCROLL */
   .week-grid {
     display: flex !important;
-    flex-direction: column;
-    gap: 0;
-    overflow-x: visible;
-    padding-bottom: 0;
+    flex-direction: row;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
   }
 
   .card {
-    flex: none;
-    max-width: 100%;
-    border-radius: 0;
-    margin-bottom: 24px;
+    flex: 0 0 280px;
+    max-width: 280px;
+    border-radius: 8px;
+    scroll-snap-align: start;
   }
 
   .thumb {
-    height: 240px;
-    border-radius: 0;
+    height: 220px;
+    border-radius: 8px 8px 0 0;
   }
 
   .card-meta {
-    padding: 12px 0;
+    padding: 12px;
   }
 
   .card-sub {
@@ -1696,16 +1698,29 @@ body.info-page .info-pad {
   }
 
   .card-title {
-    font-size: 15px;
+    font-size: 14px;
     margin-bottom: 6px;
   }
 
   .card-notes {
     font-size: 11px;
-    line-height: 1.6;
+    line-height: 1.5;
   }
 
-  /* Moire widget - show at bottom of Weekly Wonder page on mobile */
+  /* Show about.txt window on mobile - positioned below cards */
+  .left-col {
+    display: block !important;
+    position: relative !important;
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .about-window {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  /* Moire widget - show beside about.txt on mobile */
   #moire-widget {
     display: block !important;
     position: relative !important;
@@ -1713,14 +1728,36 @@ body.info-page .info-pad {
     top: auto !important;
     bottom: auto !important;
     width: 100% !important;
-    max-width: 280px;
-    height: 280px;
-    margin: 30px auto 30px;
+    max-width: 100%;
+    height: 300px;
+    margin: 0;
     pointer-events: auto;
   }
 
   #moire-widget .moire-img {
     object-fit: contain;
+  }
+
+  /* Position about + moire side by side */
+  .mac-body {
+    padding: 20px 16px 32px 16px;
+  }
+
+  /* Create flex container for about + moire */
+  #weeklyView .mac-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .left-col {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .about-window {
+    margin-bottom: 0;
   }
 
   /* Tools page - mobile optimization */
