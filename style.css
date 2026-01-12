@@ -1754,11 +1754,30 @@ body.info-page .info-pad {
 
   /* Tools page - mobile optimization - 3 VERTICAL BOXES */
   .tools-wrap {
-    padding: 16px !important;
+    padding: 0 !important;
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
+    height: auto !important;
+  }
+
+  /* Remove any borders from tools view container */
+  #toolsView {
+    border: none !important;
+  }
+
+  .tool-view {
+    border: none !important;
+    padding: 16px !important;
+  }
+
+  /* Override desktop panel and frame borders on mobile */
+  .panel,
+  .frame,
+  .tool-view .panel,
+  .tool-view .frame {
+    border: none !important;
   }
 
   .tools-header {
