@@ -224,7 +224,6 @@ function initCrossStitch() {
 function initIDTool() {
   const input = document.getElementById("idImgInput");
   const dobInput = document.getElementById("dobInput");
-  const bgModeSelect = document.getElementById("bgMode");
   const generateBtn = document.getElementById("generateID");
   const exportBtn = document.getElementById("exportID");
   const exportSize = document.getElementById("idExportSize");
@@ -237,7 +236,6 @@ function initIDTool() {
   const pctx = previewCanvas.getContext("2d", { willReadFrequently: true });
   const cctx = cardCanvas.getContext("2d", { willReadFrequently: true });
   let img = null;
-  let processedImg = null; // Store processed image with background removal
 
   function fitCanvas(canvas) {
     const frame = canvas.parentElement;
@@ -296,7 +294,6 @@ function initIDTool() {
     const im = new Image();
     im.onload = () => {
       img = im;
-      processedImg = null; // Reset processed image
       drawPreview();
     };
     im.src = URL.createObjectURL(file);
@@ -311,60 +308,9 @@ function initIDTool() {
     drawContain(pctx, img, w, h);
   }
 
-  generateBtn.addEventListener("click", async () => {
+  generateBtn.addEventListener("click", () => {
     if (!img) return;
-
-    const bgMode = bgModeSelect?.value || "none";
-
-    // If background removal is selected and we haven't processed yet
-    if (bgMode === "remove" && !processedImg) {
-      try {
-        generateBtn.disabled = true;
-        generateBtn.textContent = "Removing background...";
-
-        // Check if library is loaded from window object
-        const bgRemoval = window.removeBackground || window.imglyRemoveBackground;
-
-        if (bgRemoval) {
-          const blob = await bgRemoval(img.src);
-          const url = URL.createObjectURL(blob);
-
-          const processedImage = new Image();
-          processedImage.onload = () => {
-            processedImg = processedImage;
-            renderCard();
-            generateBtn.disabled = false;
-            generateBtn.textContent = "Generate ID";
-          };
-          processedImage.onerror = () => {
-            console.error("Failed to load processed image");
-            renderCard();
-            generateBtn.disabled = false;
-            generateBtn.textContent = "Generate ID";
-          };
-          processedImage.src = url;
-        } else {
-          // Fallback if library not loaded
-          alert("Background removal library not loaded. Please refresh the page or use 'None' mode.");
-          renderCard();
-          generateBtn.disabled = false;
-          generateBtn.textContent = "Generate ID";
-        }
-      } catch (err) {
-        console.error("Background removal failed:", err);
-        alert("Background removal failed: " + err.message);
-        renderCard();
-        generateBtn.disabled = false;
-        generateBtn.textContent = "Generate ID";
-      }
-    } else if (bgMode === "none") {
-      // Reset to original image if mode is none
-      processedImg = null;
-      renderCard();
-    } else {
-      // Use already processed image
-      renderCard();
-    }
+    renderCard();
   });
 
   exportBtn?.addEventListener("click", () => {
@@ -399,8 +345,8 @@ function initIDTool() {
     const innerW = exportWidth - pad * 2;
     const innerH = exportHeight - pad * 2;
 
-    // Use processed image if available, otherwise original
-    const sourceImg = processedImg || img;
+    // Use original image
+    const sourceImg = img;
 
     // Calculate image dimensions - photo takes 60% of height
     const imgAreaH = innerH * 0.6;
@@ -467,8 +413,8 @@ function initIDTool() {
     const innerW = w - pad * 2;
     const innerH = h - pad * 2;
 
-    // Use processed image if available, otherwise original
-    const sourceImg = processedImg || img;
+    // Use original image
+    const sourceImg = img;
 
     // Photo takes up 60% of height - LARGER for passport photo look
     const photoH = Math.floor(innerH * 0.6);
