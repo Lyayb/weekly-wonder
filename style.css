@@ -1723,9 +1723,9 @@ body.info-page .info-pad {
     font-size: 13px;
   }
 
-  /* Carousel/Folder */
+  /* Carousel/Folder - shorter height on mobile */
   .brain-box {
-    min-height: 400px;
+    min-height: 280px;
   }
 
   .folder-image {
