@@ -1810,15 +1810,19 @@ body.info-page .info-pad {
     min-height: auto !important;
   }
 
-  /* ID Me Tool - 3 box vertical layout */
-  #idTool .tools-grid {
+  /* ALL TOOLS - 3 box vertical layout */
+  #idTool .tools-grid,
+  #crossStitchTool .tools-grid,
+  #asciiTool .tools-grid {
     display: flex !important;
     flex-direction: column;
     gap: 24px;
   }
 
-  /* BOX 1: INPUT + OUTPUT combined */
-  #idTool .panel:first-child {
+  /* BOX 1: INPUT + OUTPUT combined - ALL TOOLS */
+  #idTool .panel:first-child,
+  #crossStitchTool .panel:first-child,
+  #asciiTool .panel:first-child {
     order: 1;
     border: 2px solid #000 !important;
     border-radius: 8px;
@@ -1828,8 +1832,10 @@ body.info-page .info-pad {
     min-height: auto !important;
   }
 
-  /* BOX 2: IMAGE UPLOAD */
-  #idTool .panel:nth-child(2) {
+  /* BOX 2: PREVIEW/IMAGE UPLOAD - ALL TOOLS */
+  #idTool .panel:nth-child(2),
+  #crossStitchTool .panel:nth-child(2),
+  #asciiTool .panel:nth-child(2) {
     order: 2;
     border: 2px solid #000 !important;
     border-radius: 8px;
@@ -1840,8 +1846,10 @@ body.info-page .info-pad {
     min-height: 350px;
   }
 
-  /* BOX 3: WEEKLY WONDER ID */
-  #idTool .panel:nth-child(3) {
+  /* BOX 3: OUTPUT - ALL TOOLS */
+  #idTool .panel:nth-child(3),
+  #crossStitchTool .panel:nth-child(3),
+  #asciiTool .panel:nth-child(3) {
     order: 3;
     border: 2px solid #000 !important;
     border-radius: 8px;
@@ -1898,13 +1906,17 @@ body.info-page .info-pad {
     margin: 0;
   }
 
-  #idTool .panel:nth-child(2) .frame {
+  #idTool .panel:nth-child(2) .frame,
+  #crossStitchTool .panel:nth-child(2) .frame,
+  #asciiTool .panel:nth-child(2) .frame {
     border: none !important;
     border-radius: 0;
     min-height: 350px;
   }
 
-  #idTool .panel:nth-child(3) .frame {
+  #idTool .panel:nth-child(3) .frame,
+  #crossStitchTool .panel:nth-child(3) .frame,
+  #asciiTool .panel:nth-child(3) .frame {
     border: none !important;
     border-radius: 0;
     min-height: 400px;

@@ -361,9 +361,9 @@ function initIDTool() {
     octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, pad, infoStartY + lineHeight * 2);
     octx.fillText(`TIME: ${now.toTimeString().slice(0,8)}`, pad, infoStartY + lineHeight * 3);
 
-    const ref = generateRef();
-    octx.fillText(`REF: ${ref}`, pad, infoStartY + lineHeight * 4);
-    octx.fillText(`AID: ${generateAID()}`, pad, infoStartY + lineHeight * 5);
+    octx.fillText(`REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`, pad, infoStartY + lineHeight * 4);
+    octx.fillText(`AID: ${randDigits(12)}`, pad, infoStartY + lineHeight * 5);
+    octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, pad, infoStartY + lineHeight * 6);
 
     // Watermark
     octx.font = `${Math.floor(exportDim * 0.018)}px ui-monospace, Menlo, Monaco`;
