@@ -1644,15 +1644,9 @@ body.info-page .info-pad {
     font-size: 12px;
   }
 
-  /* Tiny Player */
+  /* Tiny Player - HIDDEN on mobile */
   .tiny-player {
-    width: 280px !important;
-    left: 10px !important;
-    top: 80px !important;
-  }
-
-  .tiny-spotify iframe {
-    height: 100px;
+    display: none !important;
   }
 
   /* Info page */
@@ -1675,14 +1669,24 @@ body.info-page .info-pad {
     width: 100%;
   }
 
+  /* Moire effect - visible on mobile Info page */
+  .moire-effect-info {
+    display: block;
+    margin-bottom: 24px;
+  }
+
+  /* Contact circles - horizontal layout under moire */
   .contact-circles {
-    gap: 16px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 16px;
   }
 
   .contact-circle {
-    width: 80px;
-    height: 80px;
-    font-size: 12px;
+    width: 90px;
+    height: 90px;
+    font-size: 13px;
   }
 
   /* Carousel/Folder */
