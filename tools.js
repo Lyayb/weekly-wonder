@@ -365,20 +365,21 @@ function initIDTool() {
 
     octx.font = `${Math.floor(exportWidth * 0.022)}px ui-monospace, Menlo, Monaco`;
 
-    // Left column
+    // Left column - align to photo edge
     octx.textAlign = "left";
-    octx.fillText(`DOB: ${dob}`, pad, infoStartY);
-    octx.fillText(`SIGN: ${zodiacSign(new Date(dob))}`, pad, infoStartY + lineHeight);
-    octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, pad, infoStartY + lineHeight * 2);
-    octx.fillText(`TIME: ${now.toTimeString().slice(0,8)}`, pad, infoStartY + lineHeight * 3);
-    octx.fillText(`REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`, pad, infoStartY + lineHeight * 4);
-    octx.fillText(`AID: ${randDigits(12)}`, pad, infoStartY + lineHeight * 5);
-    octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, pad, infoStartY + lineHeight * 6);
-    octx.fillText(`WEEKLYWONDER.ORG`, pad, infoStartY + lineHeight * 7);
+    const xLeft = imgX;
+    octx.fillText(`DOB: ${dob}`, xLeft, infoStartY);
+    octx.fillText(`SIGN: ${zodiacSign(new Date(dob))}`, xLeft, infoStartY + lineHeight);
+    octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, xLeft, infoStartY + lineHeight * 2);
+    octx.fillText(`TIME: ${now.toTimeString().slice(0,8)}`, xLeft, infoStartY + lineHeight * 3);
+    octx.fillText(`REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`, xLeft, infoStartY + lineHeight * 4);
+    octx.fillText(`AID: ${randDigits(12)}`, xLeft, infoStartY + lineHeight * 5);
+    octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, xLeft, infoStartY + lineHeight * 6);
+    octx.fillText(`WEEKLYWONDER.ORG`, xLeft, infoStartY + lineHeight * 7);
 
-    // Right column
+    // Right column - align to right edge of photo
     octx.textAlign = "right";
-    const xRight = exportWidth - pad;
+    const xRight = imgX + imgW;
     octx.fillText(`K/${randDigits(4)}${randBlock(1, 3).toUpperCase()}${randDigits(6)}`, xRight, infoStartY);
     octx.fillText(`${randDigits(14)}`, xRight, infoStartY + lineHeight);
     octx.fillText(`A${randDigits(13)}`, xRight, infoStartY + lineHeight * 2);
@@ -464,16 +465,16 @@ function initIDTool() {
     // Draw left column
     cctx.textAlign = "left";
     let y = textStartY;
-    const xLeft = pad + Math.floor(w * 0.028);
+    const xLeft = pad;
     for (const line of leftLines) {
       cctx.fillText(line, xLeft, y);
       y += lineSpacing;
     }
 
-    // Draw right column (aligned under right side of photo)
+    // Draw right column (aligned closer to left, under photo)
     cctx.textAlign = "right";
     let yRight = textStartY;
-    const xRight = w - pad - Math.floor(w * 0.028);
+    const xRight = w - pad;
     for (const line of rightLines) {
       cctx.fillText(line, xRight, yRight);
       yRight += lineSpacing;
