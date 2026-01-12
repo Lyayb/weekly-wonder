@@ -1707,57 +1707,49 @@ body.info-page .info-pad {
     line-height: 1.5;
   }
 
-  /* Show about.txt window on mobile - positioned below cards */
+  /* Show about.txt and moire BELOW mac window on mobile */
   .left-col {
-    display: block !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     position: relative !important;
     width: 100%;
-    margin-top: 32px;
+    margin-top: 16px;
+    padding: 0 16px;
   }
 
   .about-window {
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 0;
   }
 
-  /* Moire widget - show beside about.txt on mobile */
-  #moire-widget {
+  /* Hide moire from desktop position */
+  #moire-widget.moire-positioned {
+    display: none !important;
+  }
+
+  /* Show moire in left-col on mobile - beside about.txt */
+  .left-col #moire-widget {
     display: block !important;
     position: relative !important;
     left: auto !important;
     top: auto !important;
     bottom: auto !important;
     width: 100% !important;
-    max-width: 100%;
-    height: 300px;
+    height: 250px;
     margin: 0;
     pointer-events: auto;
   }
 
-  #moire-widget .moire-img {
+  .left-col #moire-widget .moire-img {
     object-fit: contain;
+    width: 100%;
+    height: 100%;
   }
 
-  /* Position about + moire side by side */
+  /* Mac body - simple padding */
   .mac-body {
-    padding: 20px 16px 32px 16px;
-  }
-
-  /* Create flex container for about + moire */
-  #weeklyView .mac-body {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .left-col {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
-  }
-
-  .about-window {
-    margin-bottom: 0;
+    padding: 20px 16px 20px 16px;
   }
 
   /* Tools page - mobile optimization */
