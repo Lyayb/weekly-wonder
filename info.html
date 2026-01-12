@@ -351,12 +351,19 @@
       let pointerY = null;
       let highlightedItem = null;
       let isPaused = false;
-      let targetRotationSpeed = 0.0005; // Target rotation speed
-      let currentRotationSpeed = 0.0005; // Current rotation speed (for smooth deceleration)
+      let targetRotationSpeed = 0.0003; // Target rotation speed (slower)
+      let currentRotationSpeed = 0.0003; // Current rotation speed (for smooth deceleration)
 
-      const radius = 160; // Orbit radius in pixels (adjusted for smaller carousel)
-      const baseRotationSpeed = 0.0005; // Radians per millisecond (~12.5 seconds per rotation)
-      const proximityThreshold = 160; // Distance to trigger highlight
+      // Make radius responsive based on container size
+      function getRadius() {
+        const containerWidth = carouselContainer.offsetWidth;
+        const containerHeight = carouselContainer.offsetHeight;
+        const smallerDimension = Math.min(containerWidth, containerHeight);
+        return Math.max(80, Math.floor(smallerDimension * 0.35)); // 35% of container, min 80px
+      }
+
+      const baseRotationSpeed = 0.0003; // Radians per millisecond (slower rotation)
+      const proximityThreshold = 140; // Distance to trigger highlight
 
       // Item names mapping
       const itemNames = {
@@ -407,6 +414,9 @@
             rotationAngle += currentRotationSpeed * deltaTime;
           }
 
+          // Get dynamic radius based on container size
+          const radius = getRadius();
+
           // Check for item proximity if pointer exists
           let closestItem = null;
           let closestDistance = Infinity;
@@ -447,13 +457,15 @@
             let x = Math.cos(baseAngle) * radius;
             let y = Math.sin(baseAngle) * radius;
 
-            // Adjust offset based on item size
-            const itemIndex = parseInt(item.dataset.index);
-            const offset = (itemIndex <= 2) ? 90 : 65;
+            // Get item image size for proper centering
+            const img = item.querySelector('img');
+            const imgWidth = img ? img.offsetWidth : 90;
+            const imgHeight = img ? img.offsetHeight : 90;
+            const offset = Math.max(imgWidth, imgHeight) / 2;
 
             // If this item is highlighted, center it
             if (item.classList.contains('highlighted')) {
-              item.style.transform = `translate(-${offset}px, -${offset}px) scale(1.8)`;
+              item.style.transform = `translate(-${offset}px, -${offset}px) scale(1.6)`;
             } else {
               item.style.transform = `translate(${x - offset}px, ${y - offset}px)`;
             }
