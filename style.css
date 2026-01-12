@@ -918,8 +918,27 @@ body.info-page .main-col {
 }
 
 .hero-box-left {
-  /* Empty placeholder for future image */
   background: #fff !important;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.hero-video.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .hero-box-right p {

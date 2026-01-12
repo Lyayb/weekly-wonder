@@ -328,3 +328,56 @@
 
   console.log("[MediaPipe] Info page hand detection ready");
 })();
+
+// ========================================
+// VIDEO SWITCHER: Toggle between videos
+// ========================================
+(function() {
+  const videoBox = document.getElementById("videoBox");
+  const video1 = document.getElementById("heroVideo1");
+  const video2 = document.getElementById("heroVideo2");
+
+  if (!videoBox || !video1 || !video2) {
+    console.warn("[Video Switcher] Elements not found");
+    return;
+  }
+
+  let currentVideo = 1; // 1 or 2
+  let lastThumbsUpSwitch = 0; // Throttle thumbs up switches
+  const THUMBS_UP_COOLDOWN = 2000; // 2 seconds between switches
+
+  function switchVideo() {
+    if (currentVideo === 1) {
+      // Switch to video 2
+      video1.classList.remove("active");
+      video2.classList.add("active");
+      video2.play(); // Ensure it plays
+      currentVideo = 2;
+      console.log("[Video Switcher] Switched to video 2 (3dd me.mp4)");
+    } else {
+      // Switch to video 1
+      video2.classList.remove("active");
+      video1.classList.add("active");
+      video1.play(); // Ensure it plays
+      currentVideo = 1;
+      console.log("[Video Switcher] Switched to video 1 (3d me.mp4)");
+    }
+  }
+
+  // Click to switch
+  videoBox.addEventListener("click", () => {
+    switchVideo();
+  });
+
+  // Thumbs up gesture to switch
+  window.addEventListener("thumbsUpPosition", (e) => {
+    const now = Date.now();
+    // Throttle: only switch every 2 seconds
+    if (now - lastThumbsUpSwitch > THUMBS_UP_COOLDOWN) {
+      switchVideo();
+      lastThumbsUpSwitch = now;
+    }
+  });
+
+  console.log("[Video Switcher] Initialized");
+})();
