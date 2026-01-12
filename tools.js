@@ -224,6 +224,7 @@ function initCrossStitch() {
 function initIDTool() {
   const input = document.getElementById("idImgInput");
   const dobInput = document.getElementById("dobInput");
+  const bgModeSelect = document.getElementById("bgMode");
   const generateBtn = document.getElementById("generateID");
   const exportBtn = document.getElementById("exportID");
   const exportSize = document.getElementById("idExportSize");
@@ -236,6 +237,7 @@ function initIDTool() {
   const pctx = previewCanvas.getContext("2d", { willReadFrequently: true });
   const cctx = cardCanvas.getContext("2d", { willReadFrequently: true });
   let img = null;
+  let processedImg = null; // Store processed image with background removal
 
   function fitCanvas(canvas) {
     const frame = canvas.parentElement;
@@ -265,11 +267,15 @@ function initIDTool() {
   window.addEventListener("resize", resizeAll);
   resizeAll();
 
-  input.addEventListener("change", (e) => {
+  input.addEventListener("change", async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const im = new Image();
-    im.onload = () => { img = im; drawPreview(); };
+    im.onload = () => {
+      img = im;
+      processedImg = null; // Reset processed image
+      drawPreview();
+    };
     im.src = URL.createObjectURL(file);
   });
 
@@ -282,9 +288,51 @@ function initIDTool() {
     drawContain(pctx, img, w, h);
   }
 
-  generateBtn.addEventListener("click", () => {
+  generateBtn.addEventListener("click", async () => {
     if (!img) return;
-    renderCard();
+
+    const bgMode = bgModeSelect?.value || "none";
+
+    // If background removal is selected and we haven't processed yet
+    if (bgMode === "remove" && !processedImg) {
+      try {
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Removing background...";
+
+        // Use background removal library
+        if (typeof removeBackground !== 'undefined') {
+          const blob = await removeBackground(img.src);
+          const url = URL.createObjectURL(blob);
+
+          const processedImage = new Image();
+          processedImage.onload = () => {
+            processedImg = processedImage;
+            renderCard();
+            generateBtn.disabled = false;
+            generateBtn.textContent = "Generate ID";
+          };
+          processedImage.src = url;
+        } else {
+          // Fallback if library not loaded
+          console.warn("Background removal library not loaded");
+          renderCard();
+          generateBtn.disabled = false;
+          generateBtn.textContent = "Generate ID";
+        }
+      } catch (err) {
+        console.error("Background removal failed:", err);
+        renderCard();
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate ID";
+      }
+    } else if (bgMode === "none") {
+      // Reset to original image if mode is none
+      processedImg = null;
+      renderCard();
+    } else {
+      // Use already processed image
+      renderCard();
+    }
   });
 
   exportBtn?.addEventListener("click", () => {
@@ -296,12 +344,15 @@ function initIDTool() {
       "1600": 1600,
       "2000": 2000
     };
-    const exportDim = sizes[preset] || 1600;
+    const exportWidth = sizes[preset] || 1600;
 
-    // Create high-resolution export canvas
+    // Portrait orientation - height is 1.33x width (3:4 ratio)
+    const exportHeight = Math.floor(exportWidth * 1.33);
+
+    // Create high-resolution export canvas - PORTRAIT
     const out = document.createElement("canvas");
-    out.width = exportDim;
-    out.height = exportDim;
+    out.width = exportWidth;
+    out.height = exportHeight;
     const octx = out.getContext("2d");
 
     // Enable high-quality rendering
@@ -309,16 +360,19 @@ function initIDTool() {
     octx.imageSmoothingQuality = 'high';
 
     octx.fillStyle = "#fff";
-    octx.fillRect(0, 0, exportDim, exportDim);
+    octx.fillRect(0, 0, exportWidth, exportHeight);
 
     // Re-render ID card at export resolution for maximum quality
-    const pad = Math.floor(exportDim * 0.05);
-    const innerW = exportDim - pad * 2;
-    const innerH = exportDim - pad * 2;
+    const pad = Math.floor(exportWidth * 0.05);
+    const innerW = exportWidth - pad * 2;
+    const innerH = exportHeight - pad * 2;
 
-    // Calculate image dimensions (portrait - takes ~40% of height)
-    const imgAreaH = innerH * 0.4;
-    const imgRatio = img.width / img.height;
+    // Use processed image if available, otherwise original
+    const sourceImg = processedImg || img;
+
+    // Calculate image dimensions - photo takes 60% of height
+    const imgAreaH = innerH * 0.6;
+    const imgRatio = sourceImg.width / sourceImg.height;
     let imgW = innerW;
     let imgH = imgW / imgRatio;
     if (imgH > imgAreaH) {
@@ -329,30 +383,23 @@ function initIDTool() {
     const imgY = pad;
 
     // Draw image with high quality
-    octx.drawImage(img, imgX, imgY, imgW, imgH);
+    octx.drawImage(sourceImg, imgX, imgY, imgW, imgH);
 
-    // Draw separator line
-    const lineY = imgY + imgH + pad * 0.8;
-    octx.strokeStyle = "#000";
-    octx.lineWidth = 3;
-    octx.beginPath();
-    octx.moveTo(pad, lineY);
-    octx.lineTo(exportDim - pad, lineY);
-    octx.stroke();
+    // NO SEPARATOR LINE - removed for passport photo look
 
-    // Title
-    const titleY = lineY + pad;
+    // Title positioned directly below photo
+    const titleY = imgY + imgH + pad * 1.2;
     octx.fillStyle = "#000";
-    octx.font = `bold ${Math.floor(exportDim * 0.04)}px ui-monospace, Menlo, Monaco`;
+    octx.font = `bold ${Math.floor(exportWidth * 0.04)}px ui-monospace, Menlo, Monaco`;
     octx.fillText("WEEKLY WONDER ID", pad, titleY);
 
     // Info section
     const dob = dobInput?.value || new Date().toISOString().split('T')[0];
     const now = new Date();
     const infoStartY = titleY + pad * 1.5;
-    const lineHeight = exportDim * 0.035;
+    const lineHeight = exportWidth * 0.035;
 
-    octx.font = `${Math.floor(exportDim * 0.022)}px ui-monospace, Menlo, Monaco`;
+    octx.font = `${Math.floor(exportWidth * 0.022)}px ui-monospace, Menlo, Monaco`;
     octx.fillText(`DOB: ${dob}`, pad, infoStartY);
     octx.fillText(`SIGN: ${zodiacSign(new Date(dob))}`, pad, infoStartY + lineHeight);
     octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, pad, infoStartY + lineHeight * 2);
@@ -363,9 +410,9 @@ function initIDTool() {
     octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, pad, infoStartY + lineHeight * 6);
 
     // Watermark
-    octx.font = `${Math.floor(exportDim * 0.018)}px ui-monospace, Menlo, Monaco`;
+    octx.font = `${Math.floor(exportWidth * 0.018)}px ui-monospace, Menlo, Monaco`;
     octx.fillStyle = "rgba(0,0,0,0.5)";
-    octx.fillText("weeklywonder.org", pad, exportDim - pad * 0.5);
+    octx.fillText("weeklywonder.org", pad, exportHeight - pad * 0.5);
 
     downloadCanvas(out, "weeklywonder-id.png");
   });
@@ -391,9 +438,11 @@ function initIDTool() {
     const innerW = w - pad * 2;
     const innerH = h - pad * 2;
 
-    // Photo takes up 65% of height to leave more room for text
-    const photoH = Math.floor(innerH * 0.65);
-    const dividerY = pad + photoH;
+    // Use processed image if available, otherwise original
+    const sourceImg = processedImg || img;
+
+    // Photo takes up 60% of height - LARGER for passport photo look
+    const photoH = Math.floor(innerH * 0.6);
 
     // Draw photo with high quality
     const photoCanvas = document.createElement("canvas");
@@ -404,16 +453,10 @@ function initIDTool() {
     ph.imageSmoothingQuality = 'high';
     ph.fillStyle = "#fff";
     ph.fillRect(0, 0, innerW, photoH);
-    drawContain(ph, img, innerW, photoH);
+    drawContain(ph, sourceImg, innerW, photoH);
     cctx.drawImage(photoCanvas, pad, pad);
 
-    // Divider line
-    cctx.strokeStyle = "#000";
-    cctx.lineWidth = 2;
-    cctx.beginPath();
-    cctx.moveTo(pad, dividerY);
-    cctx.lineTo(pad + innerW, dividerY);
-    cctx.stroke();
+    // NO DIVIDER LINE - removed for passport photo look
 
     const dobStr = dobInput?.value || "—";
     const sign = dobInput?.value ? zodiacSign(new Date(dobInput.value + "T00:00:00")) : "—";
@@ -438,11 +481,12 @@ function initIDTool() {
     cctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
     cctx.textAlign = "left";
 
-    // Calculate line spacing to fit all text
-    const textAreaHeight = h - dividerY - pad;
+    // Text starts directly below photo
+    const textStartY = pad + photoH + pad * 0.8;
+    const textAreaHeight = h - textStartY - pad;
     const lineSpacing = Math.min(18, Math.floor(textAreaHeight / (lines.length + 1)));
 
-    let y = dividerY + lineSpacing;
+    let y = textStartY;
     const x = pad + Math.floor(w * 0.028);
     for (const line of lines) {
       cctx.fillText(line, x, y);
