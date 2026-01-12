@@ -376,6 +376,9 @@ function initIDTool() {
     a.click();
   });
 
+  // Track if card has been rendered
+  let cardRendered = false;
+
   function renderCard() {
     // Use proper dimensions from styled canvas
     const w = parseInt(cardCanvas.style.width) || cardCanvas.width;
@@ -451,7 +454,33 @@ function initIDTool() {
       cctx.fillText(line, x, y);
       y += lineSpacing;
     }
+    cardRendered = true;
   }
+
+  // Fix for canvas disappearing on scroll - re-render when visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && cardRendered && img) {
+        // Re-render card when it comes into view
+        setTimeout(() => renderCard(), 50);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  if (cardCanvas) {
+    observer.observe(cardCanvas);
+  }
+
+  // Also re-render on scroll to prevent disappearing
+  let scrollTimeout;
+  window.addEventListener('scroll', () => {
+    if (cardRendered && img) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        renderCard();
+      }, 100);
+    }
+  }, { passive: true });
 }
 
 /* =========================================================

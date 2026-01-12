@@ -1915,6 +1915,16 @@ body.info-page .info-pad {
     height: auto !important;
     max-height: 100%;
     object-fit: contain;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Fix for canvas disappearing on scroll */
+  #idCardCanvas,
+  #idPreviewCanvas {
+    position: relative !important;
+    display: block !important;
   }
 
   /* Buttons - make prominent */
