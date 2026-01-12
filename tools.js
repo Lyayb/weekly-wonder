@@ -236,14 +236,27 @@ function initIDTool() {
 
   if (!input || !previewCanvas || !cardCanvas || !generateBtn) return;
 
-  const pctx = previewCanvas.getContext("2d");
-  const cctx = cardCanvas.getContext("2d");
+  const pctx = previewCanvas.getContext("2d", { willReadFrequently: true });
+  const cctx = cardCanvas.getContext("2d", { willReadFrequently: true });
   let img = null;
 
   function fitCanvas(canvas) {
     const frame = canvas.parentElement;
-    canvas.width = Math.max(1, frame.clientWidth);
-    canvas.height = Math.max(1, frame.clientHeight);
+    const width = Math.max(1, frame.clientWidth);
+    const height = Math.max(1, frame.clientHeight);
+
+    // Use higher resolution for better quality
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+
+    // Scale context for high DPI
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    return { width, height };
   }
 
   function resizeAll() {
@@ -264,8 +277,12 @@ function initIDTool() {
   });
 
   function drawPreview() {
+    const w = parseInt(previewCanvas.style.width) || previewCanvas.width;
+    const h = parseInt(previewCanvas.style.height) || previewCanvas.height;
     pctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-    drawContain(pctx, img, previewCanvas.width, previewCanvas.height);
+    pctx.imageSmoothingEnabled = true;
+    pctx.imageSmoothingQuality = 'high';
+    drawContain(pctx, img, w, h);
   }
 
   generateBtn.addEventListener("click", () => {
@@ -274,56 +291,126 @@ function initIDTool() {
   });
 
   exportBtn?.addEventListener("click", () => {
-    const preset = exportSize?.value || "ig45";
-    const presets = {
-      igPost: [1080, 1080],
-      ig45:   [1080, 1350],
-      story:  [1080, 1920],
-      land:   [1920, 1080],
+    if (!img) return;
+
+    const preset = exportSize?.value || "1600";
+    const sizes = {
+      "1200": 1200,
+      "1600": 1600,
+      "2000": 2000
     };
-    const [w, h] = presets[preset] || presets.ig45;
+    const exportDim = sizes[preset] || 1600;
 
+    // Create high-resolution export canvas
     const out = document.createElement("canvas");
-    out.width = w;
-    out.height = h;
+    out.width = exportDim;
+    out.height = exportDim;
     const octx = out.getContext("2d");
-    octx.fillStyle = "#fff";
-    octx.fillRect(0, 0, w, h);
 
-    const s = Math.min(w / cardCanvas.width, h / cardCanvas.height);
-    const dw = cardCanvas.width * s;
-    const dh = cardCanvas.height * s;
-    const dx = (w - dw) / 2;
-    const dy = (h - dh) / 2;
-    octx.drawImage(cardCanvas, dx, dy, dw, dh);
+    // Enable high-quality rendering
+    octx.imageSmoothingEnabled = true;
+    octx.imageSmoothingQuality = 'high';
+
+    octx.fillStyle = "#fff";
+    octx.fillRect(0, 0, exportDim, exportDim);
+
+    // Re-render ID card at export resolution for maximum quality
+    const pad = Math.floor(exportDim * 0.05);
+    const innerW = exportDim - pad * 2;
+    const innerH = exportDim - pad * 2;
+
+    // Calculate image dimensions (portrait - takes ~40% of height)
+    const imgAreaH = innerH * 0.4;
+    const imgRatio = img.width / img.height;
+    let imgW = innerW;
+    let imgH = imgW / imgRatio;
+    if (imgH > imgAreaH) {
+      imgH = imgAreaH;
+      imgW = imgH * imgRatio;
+    }
+    const imgX = pad + (innerW - imgW) / 2;
+    const imgY = pad;
+
+    // Draw image with high quality
+    octx.drawImage(img, imgX, imgY, imgW, imgH);
+
+    // Draw separator line
+    const lineY = imgY + imgH + pad * 0.8;
+    octx.strokeStyle = "#000";
+    octx.lineWidth = 3;
+    octx.beginPath();
+    octx.moveTo(pad, lineY);
+    octx.lineTo(exportDim - pad, lineY);
+    octx.stroke();
+
+    // Title
+    const titleY = lineY + pad;
+    octx.fillStyle = "#000";
+    octx.font = `bold ${Math.floor(exportDim * 0.04)}px ui-monospace, Menlo, Monaco`;
+    octx.fillText("WEEKLY WONDER ID", pad, titleY);
+
+    // Info section
+    const dob = dobInput?.value || new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const infoStartY = titleY + pad * 1.5;
+    const lineHeight = exportDim * 0.035;
+
+    octx.font = `${Math.floor(exportDim * 0.022)}px ui-monospace, Menlo, Monaco`;
+    octx.fillText(`DOB: ${dob}`, pad, infoStartY);
+    octx.fillText(`SIGN: ${zodiacSign(new Date(dob))}`, pad, infoStartY + lineHeight);
+    octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, pad, infoStartY + lineHeight * 2);
+    octx.fillText(`TIME: ${now.toTimeString().slice(0,8)}`, pad, infoStartY + lineHeight * 3);
+
+    const ref = generateRef();
+    octx.fillText(`REF: ${ref}`, pad, infoStartY + lineHeight * 4);
+    octx.fillText(`AID: ${generateAID()}`, pad, infoStartY + lineHeight * 5);
+
+    // Watermark
+    octx.font = `${Math.floor(exportDim * 0.018)}px ui-monospace, Menlo, Monaco`;
+    octx.fillStyle = "rgba(0,0,0,0.5)";
+    octx.fillText("weeklywonder.org", pad, exportDim - pad * 0.5);
 
     const a = document.createElement("a");
     a.download = "weeklywonder-id.png";
-    a.href = out.toDataURL("image/png");
+    a.href = out.toDataURL("image/png", 1.0);
     a.click();
   });
 
   function renderCard() {
+    // Use proper dimensions from styled canvas
+    const w = parseInt(cardCanvas.style.width) || cardCanvas.width;
+    const h = parseInt(cardCanvas.style.height) || cardCanvas.height;
+
     cctx.clearRect(0, 0, cardCanvas.width, cardCanvas.height);
     cctx.fillStyle = "#fff";
-    cctx.fillRect(0, 0, cardCanvas.width, cardCanvas.height);
+    cctx.fillRect(0, 0, w, h);
 
-    const pad = 24;
-    const innerW = cardCanvas.width - pad * 2;
-    const innerH = cardCanvas.height - pad * 2;
+    // Enable high-quality image smoothing
+    cctx.imageSmoothingEnabled = true;
+    cctx.imageSmoothingQuality = 'high';
 
-    const photoH = Math.floor(innerH * 0.66);
+    // Adjust padding based on canvas size (smaller on mobile)
+    const pad = Math.max(16, Math.floor(w * 0.04));
+    const innerW = w - pad * 2;
+    const innerH = h - pad * 2;
+
+    // Photo takes up 65% of height to leave more room for text
+    const photoH = Math.floor(innerH * 0.65);
     const dividerY = pad + photoH;
 
+    // Draw photo with high quality
     const photoCanvas = document.createElement("canvas");
     photoCanvas.width = innerW;
     photoCanvas.height = photoH;
     const ph = photoCanvas.getContext("2d");
+    ph.imageSmoothingEnabled = true;
+    ph.imageSmoothingQuality = 'high';
     ph.fillStyle = "#fff";
     ph.fillRect(0, 0, innerW, photoH);
     drawContain(ph, img, innerW, photoH);
     cctx.drawImage(photoCanvas, pad, pad);
 
+    // Divider line
     cctx.strokeStyle = "#000";
     cctx.lineWidth = 2;
     cctx.beginPath();
@@ -349,14 +436,20 @@ function initIDTool() {
     ];
 
     cctx.fillStyle = "#000";
-    cctx.font = "13px ui-monospace, Menlo, Monaco, Consolas, monospace";
+    // Scale font size based on canvas width
+    const fontSize = Math.max(10, Math.floor(w * 0.026));
+    cctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
     cctx.textAlign = "left";
 
-    let y = dividerY + 26;
-    const x = pad + 14;
+    // Calculate line spacing to fit all text
+    const textAreaHeight = h - dividerY - pad;
+    const lineSpacing = Math.min(18, Math.floor(textAreaHeight / (lines.length + 1)));
+
+    let y = dividerY + lineSpacing;
+    const x = pad + Math.floor(w * 0.028);
     for (const line of lines) {
       cctx.fillText(line, x, y);
-      y += 18;
+      y += lineSpacing;
     }
   }
 }

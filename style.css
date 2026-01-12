@@ -1752,7 +1752,7 @@ body.info-page .info-pad {
     padding: 20px 16px 20px 16px;
   }
 
-  /* Tools page - mobile optimization */
+  /* Tools page - mobile optimization - 3 VERTICAL BOXES */
   .tools-wrap {
     padding: 16px !important;
     border-radius: 0 !important;
@@ -1762,117 +1762,142 @@ body.info-page .info-pad {
   }
 
   .tools-header {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .tools-header h1 {
-    font-size: 22px;
-    margin-bottom: 6px;
+    font-size: 18px;
+    margin-bottom: 4px;
   }
 
   .tools-sub {
-    font-size: 12px;
+    font-size: 11px;
   }
 
-  /* Tools grid - vertical layout with minimal gaps */
+  /* Tools grid - 3 VERTICAL BOXES STACKED */
   .tools-grid {
-    grid-template-columns: 1fr !important;
-    gap: 24px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
     padding: 0;
   }
 
-  /* Clean panel styling - no borders, proper spacing */
-  .tool-view .panel {
-    border: none !important;
-    border-radius: 0 !important;
+  /* ID Me Tool - 3 box vertical layout */
+  #idTool .tools-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* BOX 1: INPUT + OUTPUT combined */
+  #idTool .panel:first-child {
+    order: 1;
+    border: 2px solid #000 !important;
+    border-radius: 8px;
+    padding: 16px !important;
+    background: #fff;
+  }
+
+  /* BOX 2: IMAGE UPLOAD */
+  #idTool .panel:nth-child(2) {
+    order: 2;
+    border: 2px solid #000 !important;
+    border-radius: 8px;
     padding: 0 !important;
-    background: transparent;
-    min-height: auto;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  /* BOX 3: WEEKLY WONDER ID */
+  #idTool .panel:nth-child(3) {
+    order: 3;
+    border: 2px solid #000 !important;
+    border-radius: 8px;
+    padding: 0 !important;
+    background: #fff;
+    overflow: hidden;
   }
 
   .panel-title {
-    font-size: 13px;
-    margin-bottom: 8px;
-    font-weight: 600;
+    font-size: 11px;
+    margin-bottom: 12px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-family: var(--mono);
   }
 
   /* Compact form fields */
   .field {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .field span {
-    font-size: 11px;
+    font-size: 10px;
     display: block;
     margin-bottom: 4px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .field input[type="file"],
   .field input[type="date"],
-  .field input[type="range"],
   .field select {
-    font-size: 12px;
-    padding: 5px 6px;
+    font-size: 11px;
+    padding: 6px 8px;
     width: 100%;
   }
 
-  /* Make date input more compact */
-  .field input[type="date"] {
-    font-size: 11px;
-    padding: 4px 6px;
-  }
-
-  /* Frame containers - minimal height, clean borders */
+  /* Frame containers - proper sizing for mobile */
   .tool-view .frame {
-    min-height: 200px;
-    max-height: 300px;
+    min-height: 250px;
+    max-height: 350px;
     height: auto;
     border: 2px solid #000 !important;
-    border-radius: 6px;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fafafa;
+    background: #f9f9f9;
     overflow: hidden;
     position: relative;
+    margin: 0;
   }
 
-  .tool-view .frame canvas,
-  .tool-view .frame img {
-    max-width: 100%;
-    max-height: 100%;
+  #idTool .panel:nth-child(2) .frame,
+  #idTool .panel:nth-child(3) .frame {
+    border: none !important;
+    border-radius: 0;
+    min-height: 300px;
+  }
+
+  .tool-view .frame canvas {
+    width: 100% !important;
+    height: auto !important;
     object-fit: contain;
   }
 
-  /* Cherub placeholder image */
-  .cherub {
-    max-width: 80%;
-    max-height: 80%;
-    opacity: 0.3;
-  }
-
-  /* Buttons - compact and smaller */
+  /* Buttons - make prominent */
   .btn {
     width: 100%;
-    padding: 8px;
-    font-size: 12px;
+    padding: 10px;
+    font-size: 13px;
     margin-top: 8px;
-    font-weight: 600;
+    font-weight: 700;
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
   }
 
   /* Hints */
   .hint {
-    font-size: 10px;
-    margin-top: 4px;
+    font-size: 9px;
+    margin-top: 6px;
     opacity: 0.7;
   }
 
-  /* Remove extra spacing from Output panel */
-  .panel.mt {
-    margin-top: 0 !important;
+  /* Hide mt class spacing on mobile */
+  .panel-title.mt {
+    margin-top: 16px !important;
   }
 
   /* Tiny Player - HIDDEN on mobile */
