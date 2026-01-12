@@ -2255,18 +2255,15 @@ body.tools-page .frame{
   min-height: 360px; /* keeps it looking like your mock even on smaller screens */
 }
 
-/* ID tool canvas - portrait orientation needs proper containment */
+/* ID tool canvas - matches other tools */
 body.tools-page #idTool .panel:nth-child(3) .frame {
-  min-height: 500px;
-  max-height: 600px;
-  overflow: auto;
+  height: 100%;
+  min-height: 360px;
 }
 
-/* Make canvas fit within frame */
 body.tools-page #idTool #idCardCanvas {
-  max-height: 100%;
-  width: auto !important;
-  height: auto !important;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 /* ================================

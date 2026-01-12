@@ -239,22 +239,8 @@ function initIDTool() {
 
   function fitCanvas(canvas) {
     const frame = canvas.parentElement;
-    let width = Math.max(1, frame.clientWidth);
-    let height = Math.max(1, frame.clientHeight);
-
-    // For ID card canvas (portrait), constrain to 3:4 aspect ratio
-    if (canvas.id === 'idCardCanvas') {
-      const targetAspect = 3 / 4; // width / height
-      const frameAspect = width / height;
-
-      if (frameAspect > targetAspect) {
-        // Frame is wider than needed, constrain by height
-        width = height * targetAspect;
-      } else {
-        // Frame is taller than needed, constrain by width
-        height = width / targetAspect;
-      }
-    }
+    const width = Math.max(1, frame.clientWidth);
+    const height = Math.max(1, frame.clientHeight);
 
     // Use higher resolution for better quality
     const dpr = window.devicePixelRatio || 1;
