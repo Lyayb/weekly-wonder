@@ -1580,8 +1580,13 @@ body.info-page .info-pad {
   .tools-grid{ grid-template-columns: 1fr; }
   .frame{ height:320px; }
 
-  /* Hide moire on smaller screens */
+  /* Hide moire on smaller screens (desktop only) */
   #moire-widget { display: none; }
+
+  /* Tools grid - vertical on tablet */
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Mobile phones */
@@ -1623,6 +1628,20 @@ body.info-page .info-pad {
     max-width: 100%;
   }
 
+  /* Moire widget - show at bottom of Weekly Wonder page on mobile */
+  #moire-widget {
+    display: block !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-width: 400px;
+    height: 400px;
+    margin: 40px auto 20px;
+    pointer-events: auto;
+  }
+
   /* Tools page */
   .tools-header h1 {
     font-size: 24px;
@@ -1630,6 +1649,12 @@ body.info-page .info-pad {
 
   .tools-sub {
     font-size: 12px;
+  }
+
+  /* Tools grid - vertical layout on mobile */
+  .tools-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
   }
 
   .panel {
@@ -1667,6 +1692,15 @@ body.info-page .info-pad {
   .interactive-left,
   .interactive-right {
     width: 100%;
+  }
+
+  /* Hide video controls on mobile - videos play continuously */
+  .hero-video::-webkit-media-controls {
+    display: none !important;
+  }
+
+  .hero-video::-webkit-media-controls-enclosure {
+    display: none !important;
   }
 
   /* Moire effect - visible on mobile Info page */
