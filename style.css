@@ -2336,9 +2336,9 @@ body.tools-page #idTool #idCardCanvas {
   border-radius: 0;
 }
 
-/* Frames (image + output areas) */
+/* Frames (image + output areas) - no border since panel has border */
 .tool-view .frame {
-  border: 2px solid #000;
+  border: none;
   border-radius: 0;
   overflow: hidden;
 }
