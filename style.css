@@ -1636,10 +1636,14 @@ body.info-page .info-pad {
     top: auto !important;
     bottom: auto !important;
     width: 100% !important;
-    max-width: 400px;
-    height: 400px;
-    margin: 40px auto 20px;
+    max-width: 280px;
+    height: 280px;
+    margin: 30px auto 30px;
     pointer-events: auto;
+  }
+
+  #moire-widget .moire-img {
+    object-fit: contain;
   }
 
   /* Tools page */
