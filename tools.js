@@ -214,10 +214,7 @@ function initCrossStitch() {
     octx.fillStyle = "rgba(0,0,0,.55)";
     octx.fillText("weeklywonder.org", 16, size - 18);
 
-    const a = document.createElement("a");
-    a.download = "weeklywonder-crossstitch.png";
-    a.href = out.toDataURL("image/png");
-    a.click();
+    downloadCanvas(out, "weeklywonder-crossstitch.png");
   });
 }
 
@@ -370,10 +367,7 @@ function initIDTool() {
     octx.fillStyle = "rgba(0,0,0,0.5)";
     octx.fillText("weeklywonder.org", pad, exportDim - pad * 0.5);
 
-    const a = document.createElement("a");
-    a.download = "weeklywonder-id.png";
-    a.href = out.toDataURL("image/png", 1.0);
-    a.click();
+    downloadCanvas(out, "weeklywonder-id.png");
   });
 
   // Track if card has been rendered
@@ -535,10 +529,16 @@ function initASCIITool() {
     const w = Math.max(1, frame.clientWidth);
     const h = Math.max(1, frame.clientHeight);
 
+    // Use device pixel ratio for sharp rendering
+    const dpr = window.devicePixelRatio || 1;
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
-    canvas.width = w;
-    canvas.height = h;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+
+    // Scale context to account for DPR
+    const ctx = canvas.getContext("2d");
+    ctx.scale(dpr, dpr);
   }
 
   function resizeAll() {
@@ -786,16 +786,61 @@ function initASCIITool() {
 
     ctx.drawImage(outCanvas, dx, dy, dw, dh);
 
-    const a = document.createElement("a");
-    a.download = "weeklywonder-ascii.png";
-    a.href = out.toDataURL("image/png");
-    a.click();
+    downloadCanvas(out, "weeklywonder-ascii.png");
   });
 }
 
 /* =========================
    Shared helpers
 ========================= */
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || window.innerWidth <= 768;
+}
+
+function downloadCanvas(canvas, filename) {
+  const dataUrl = canvas.toDataURL("image/png", 1.0);
+
+  if (isMobile()) {
+    // On mobile: open in new tab for long-press save
+    const img = new Image();
+    img.src = dataUrl;
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+
+    const win = window.open('');
+    if (win) {
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>${filename}</title>
+          <style>
+            body { margin: 0; padding: 20px; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+            img { max-width: 100%; height: auto; border-radius: 8px; }
+            p { color: #fff; text-align: center; font-family: sans-serif; font-size: 14px; margin-top: 16px; }
+          </style>
+        </head>
+        <body>
+          <div>
+            <img src="${dataUrl}" alt="${filename}">
+            <p>Long press image to save to your library</p>
+          </div>
+        </body>
+        </html>
+      `);
+      win.document.close();
+    }
+  } else {
+    // On desktop: traditional download
+    const a = document.createElement("a");
+    a.download = filename;
+    a.href = dataUrl;
+    a.click();
+  }
+}
+
 function drawContain(ctx, img, w, h) {
   const s = Math.min(w / img.width, h / img.height);
   const dw = img.width * s;
