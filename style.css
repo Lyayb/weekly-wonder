@@ -1,4 +1,4 @@
-/* INFO PAGE REDESIGN v2.0 - FORCE RELOAD */
+/* INFO PAGE REDESIGN v2.0 - FORCE RELOAD + MOBILE FRIENDLY */
 :root{
   --bg:#FFFFFF;
   --ink:#1a1a1a;
@@ -1568,13 +1568,175 @@ body.info-page .info-pad {
 /* Drag cursor */
 .drag-handle{ cursor:move; }
 
-/* Responsive-ish */
+/* ================================
+   MOBILE RESPONSIVENESS
+================================ */
+
+/* Tablets and small laptops */
 @media (max-width: 1100px){
   .desktop{ grid-template-columns: 1fr; }
   .left-col{ display:none; }
   .tiny-player{ left:18px; top:120px; }
   .tools-grid{ grid-template-columns: 1fr; }
   .frame{ height:320px; }
+
+  /* Hide moire on smaller screens */
+  #moire-widget { display: none; }
+}
+
+/* Mobile phones */
+@media (max-width: 768px) {
+  /* Navigation */
+  .top-nav {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .nav-link {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .tools-dropdown {
+    right: 0;
+    left: auto;
+    min-width: 150px;
+  }
+
+  /* Search bar */
+  .search-bar {
+    padding: 10px;
+  }
+
+  .search-bar input {
+    font-size: 14px;
+  }
+
+  /* Weekly Wonder cards */
+  .week-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  .card {
+    max-width: 100%;
+  }
+
+  /* Tools page */
+  .tools-header h1 {
+    font-size: 24px;
+  }
+
+  .tools-sub {
+    font-size: 12px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+  }
+
+  .field span {
+    font-size: 12px;
+  }
+
+  /* Tiny Player */
+  .tiny-player {
+    width: 280px !important;
+    left: 10px !important;
+    top: 80px !important;
+  }
+
+  .tiny-spotify iframe {
+    height: 100px;
+  }
+
+  /* Info page */
+  .hero-boxes {
+    grid-template-columns: 1fr !important;
+    gap: 24px;
+  }
+
+  .hero-box {
+    min-height: 300px;
+  }
+
+  .hero-box-right p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .interactive-left,
+  .interactive-right {
+    width: 100%;
+  }
+
+  .contact-circles {
+    gap: 16px;
+  }
+
+  .contact-circle {
+    width: 80px;
+    height: 80px;
+    font-size: 12px;
+  }
+
+  /* Carousel/Folder */
+  .brain-box {
+    min-height: 400px;
+  }
+
+  .folder-image {
+    max-width: 200px;
+  }
+
+  .carousel-orbit {
+    width: 280px;
+    height: 280px;
+  }
+
+  .carousel-item img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .week-label {
+    font-size: 14px;
+  }
+
+  .card-title {
+    font-size: 13px;
+  }
+
+  .card-sub,
+  .card-notes {
+    font-size: 11px;
+  }
+
+  .tiny-player {
+    width: 260px !important;
+  }
+
+  .contact-circle {
+    width: 70px;
+    height: 70px;
+    font-size: 11px;
+  }
+
+  .hero-box {
+    min-height: 250px;
+  }
 }
 /* =========================
    TOOLS PAGE OVERRIDES (tools.html only)
