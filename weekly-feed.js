@@ -48,65 +48,137 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then((csv) => {
       console.log("[Weekly Feed] CSV data received, length:", csv.length);
-      const rows = csv.split("\n").slice(1); // skip header
-      console.log("[Weekly Feed] Number of rows:", rows.length);
       feed.innerHTML = ""; // clear placeholder
 
-      const weekBlock = document.createElement("div");
-      weekBlock.className = "week-block";
+      // Split CSV, skip header, process ALL data rows
+      const allRows = csv.split("\n");
+      const dataRows = allRows.slice(1); // skip header
 
-      const label = document.createElement("h2");
-      label.className = "week-label";
-      label.textContent = "Latest Weekly Wonder";
-      weekBlock.appendChild(label);
+      console.log(`[Weekly Feed] Total data rows: ${dataRows.length}`);
 
-      const grid = document.createElement("div");
-      grid.className = "week-grid";
+      // Collect valid items (with limit)
+      const validItems = [];
+      const MAX_CARDS = 4;
 
-      rows.forEach((row) => {
-        if (!row.trim()) return;
+      dataRows.forEach((row, index) => {
+        if (validItems.length >= MAX_CARDS) return; // Stop once we have 4 valid items
+        if (!row.trim()) return; // Skip empty lines
 
         const cols = parseCSVRow(row);
 
+        // Extract data from columns
+        const week = cols[0] || "";
+        const date = cols[1] || "";
         const title = cols[4] || "";
         const link = cols[5] || "";
         const image = cols[6] || "";
         const type = cols[3] || "";
-        const notes = cols[7] || "";
+        const notes = cols[8] || "";
 
-        // Debug: log what we're getting
-        console.log("[Weekly Feed] Card:", { title, type, image: image.substring(0, 50) + "..." });
+        console.log(`[Weekly Feed] Row ${index + 2}: week="${week}", title="${title}", image="${image.substring(0, 30)}..."`);
 
-        const card = document.createElement("div");
-        card.className = "card";
-
-        // Add data attributes for search filtering
-        card.setAttribute("data-title", title.toLowerCase());
-        card.setAttribute("data-type", type.toLowerCase());
-        card.setAttribute("data-notes", notes.toLowerCase());
-        card.setAttribute("data-link", link.toLowerCase());
-
-        card.innerHTML = `
-          <img src="${image}" alt="" class="thumb">
-          <div class="card-meta">
-            <div class="card-title">${title}</div>
-            <div class="card-sub">${type}</div>
-            ${notes ? `<div class="card-notes">${notes}</div>` : ""}
-          </div>
-        `;
-
-        if (link) {
-          card.addEventListener("click", () => {
-            window.open(link, "_blank");
+        // Only add if it has ALL required fields
+        if (week.trim() && title.trim() && image.trim()) {
+          validItems.push({
+            week,
+            date,
+            title,
+            link,
+            image,
+            type,
+            notes
           });
+          console.log(`[Weekly Feed] ✓ Valid item ${validItems.length}: ${title}`);
+        } else {
+          console.log(`[Weekly Feed] ✗ Skipped incomplete row ${index + 2}`);
         }
-
-        grid.appendChild(card);
       });
 
-      weekBlock.appendChild(grid);
-      feed.appendChild(weekBlock);
+      console.log(`[Weekly Feed] Total valid items: ${validItems.length}`);
 
+      // Group valid items by week
+      const weekGroups = {};
+
+      validItems.forEach((item) => {
+        if (!weekGroups[item.week]) {
+          weekGroups[item.week] = {
+            date: item.date,
+            items: []
+          };
+        }
+
+        weekGroups[item.week].items.push({
+          title: item.title,
+          link: item.link,
+          image: item.image,
+          type: item.type,
+          notes: item.notes
+        });
+      });
+
+      // Create a week block for each group
+      console.log(`[Weekly Feed] Total weeks found: ${Object.keys(weekGroups).length}`);
+
+      let cardsCreatedCount = 0;
+
+      Object.keys(weekGroups).forEach((weekLabel) => {
+        const weekData = weekGroups[weekLabel];
+
+        console.log(`[Weekly Feed] Processing week: ${weekLabel}, items: ${weekData.items.length}`);
+
+        const weekBlock = document.createElement("div");
+        weekBlock.className = "week-block";
+
+        const label = document.createElement("h2");
+        label.className = "week-label";
+        // Format: "Week 01.08.2026" or just week label if no date
+        label.textContent = weekData.date ? `Week ${weekData.date}` : weekLabel;
+        weekBlock.appendChild(label);
+
+        const grid = document.createElement("div");
+        grid.className = "week-grid";
+
+        // Add items for this week - ABSOLUTE LIMIT OF 4 CARDS
+        weekData.items.forEach((item) => {
+          if (cardsCreatedCount >= MAX_CARDS) {
+            console.log(`[Weekly Feed] HARD STOP - Already created ${MAX_CARDS} cards, skipping: ${item.title}`);
+            return;
+          }
+          cardsCreatedCount++;
+          console.log(`[Weekly Feed] Creating card ${cardsCreatedCount}/${MAX_CARDS}: ${item.title}`);
+          const card = document.createElement("div");
+          card.className = "card";
+
+          // Add data attributes for search filtering
+          card.setAttribute("data-title", item.title.toLowerCase());
+          card.setAttribute("data-type", item.type.toLowerCase());
+          card.setAttribute("data-notes", item.notes.toLowerCase());
+          card.setAttribute("data-link", item.link.toLowerCase());
+          card.setAttribute("data-week", weekLabel.toLowerCase());
+
+          card.innerHTML = `
+            <img src="${item.image}" alt="${item.title}" class="thumb">
+            <div class="card-meta">
+              <div class="card-sub">${item.type}</div>
+              <div class="card-title">${item.title}</div>
+              ${item.notes ? `<div class="card-notes">${item.notes}</div>` : ""}
+            </div>
+          `;
+
+          if (item.link) {
+            card.addEventListener("click", () => {
+              window.open(item.link, "_blank");
+            });
+          }
+
+          grid.appendChild(card);
+        });
+
+        weekBlock.appendChild(grid);
+        feed.appendChild(weekBlock);
+      });
+
+      console.log(`[Weekly Feed] Feed created with ${validItems.length} items`);
       console.log("[Weekly Feed] loaded safely");
 
       // ---- SEARCH FUNCTIONALITY ----
@@ -136,12 +208,14 @@ document.addEventListener("DOMContentLoaded", () => {
               const type = card.getAttribute("data-type") || "";
               const notes = card.getAttribute("data-notes") || "";
               const link = card.getAttribute("data-link") || "";
+              const week = card.getAttribute("data-week") || "";
 
               const matches =
                 title.includes(query) ||
                 type.includes(query) ||
                 notes.includes(query) ||
-                link.includes(query);
+                link.includes(query) ||
+                week.includes(query);
 
               card.style.display = matches ? "" : "none";
             });

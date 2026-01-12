@@ -3,8 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Info / Contact — Weekly Wonder</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- Page Title -->
+  <title>Info - Weekly Wonder</title>
+
+  <!-- SEO Description -->
+  <meta name="description" content="Creative technologist building interactive experiences. From Tumblr customization to creative tech experiments.">
+
+  <!-- Social Media Preview (Open Graph) -->
+  <meta property="og:title" content="About - Weekly Wonder">
+  <meta property="og:description" content="Creative technologist. Interactive art enthusiast. Building the playful internet.">
+  <meta property="og:image" content="https://weeklywonder.org/preview.png">
+  <meta property="og:url" content="https://weeklywonder.org/info.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About - Weekly Wonder">
+  <meta name="twitter:description" content="Creative technologist. Interactive art enthusiast. Building the playful internet.">
+  <meta name="twitter:image" content="https://weeklywonder.org/preview.png">
+
+  <!-- Favicon (all sizes) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data: https:;
+                 frame-src https://open.spotify.com;
+                 connect-src 'self';
+                 media-src 'self';">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+
+  <link rel="stylesheet" href="style.css?v=4" />
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 
 <body class="info-page">
@@ -20,116 +61,134 @@
       <!-- TOP NAV -->
       <nav class="top-nav" aria-label="Primary">
         <a class="nav-link" href="index.html">Weekly Wonder</a>
-        <a class="nav-link" href="tools.html">Tools</a>
+        <div class="nav-link-wrapper">
+          <a class="nav-link" href="tools.html" id="toolsLink">Tools</a>
+          <div class="tools-dropdown" id="toolsDropdown">
+            <a href="tools.html#crossStitch" class="dropdown-item">Cross stitch</a>
+            <a href="tools.html#ascii" class="dropdown-item">ASCII</a>
+            <a href="tools.html#idMe" class="dropdown-item">ID Me</a>
+          </div>
+        </div>
         <a class="nav-link is-active" href="info.html">Info / Contact</a>
       </nav>
 
       <!-- INFO VIEW -->
       <section class="view is-active" id="infoView">
-        <div class="big-frame">
-          <div class="scroll-area">
-            <div class="info-pad">
+        <div class="info-scroll-container">
 
-            <!-- About Section -->
-            <div class="about-container" data-emphasis="off">
+          <!-- Mac-style Camera Permission Popup -->
+          <div class="camera-popup-overlay" id="cameraPopup">
+            <div class="camera-popup-window">
+              <div class="window-header drag-handle">
+                <span class="dot red" id="closePopup"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="window-title">Camera permissions</span>
+              </div>
+              <div class="window-body camera-popup-body">
+                <p class="popup-message">Camera enables interactive features.<br>
+                Give a thumbs up to explore items, or just use your mouse.</p>
 
-              <!-- Mac-style Camera Permission Popup -->
-              <div class="camera-popup-overlay" id="cameraPopup">
-                <div class="camera-popup-window">
-                  <div class="window-header drag-handle">
-                    <span class="dot red" id="closePopup"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                    <span class="window-title">Camera permissions</span>
-                  </div>
-                  <div class="window-body camera-popup-body">
-                    <p class="popup-message">Camera enables interactive features.<br>
-                    Wave left or right hand to find out<br>
-                    or just use mouse controls.<br>
-                    The option is yours.</p>
-
-                    <div class="popup-buttons">
-                      <button id="enableCameraBtn" class="btn camera-choice-btn">Enable Camera</button>
-                      <button id="disableCameraBtn" class="btn camera-choice-btn">Camera off</button>
-                    </div>
-
-                    <p class="popup-disclaimer">Runs locally in your browser. Nothing is recorded or stored. You can keep camera off.</p>
-                  </div>
+                <div class="popup-buttons">
+                  <button id="enableCameraBtn" class="btn camera-choice-btn">Enable Camera</button>
+                  <button id="disableCameraBtn" class="btn camera-choice-btn">Camera off</button>
                 </div>
+
+                <p class="popup-disclaimer">Runs locally in your browser. Nothing is recorded or stored. You can keep camera off.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 1: HERO -->
+          <section class="info-hero-section">
+            <h1 class="hero-title">
+              HI, I'M<br>
+              GABRIELLA
+            </h1>
+
+            <div class="hero-boxes">
+              <!-- Left Box: Empty placeholder for image -->
+              <div class="hero-box hero-box-left">
+                <!-- Empty bordered container for future image -->
               </div>
 
-              <!-- Small button to reopen popup (hidden initially) -->
-              <button id="reopenPopup" class="reopen-camera-btn" style="display: none;">
+              <!-- Right Box: About text -->
+              <div class="hero-box hero-box-right">
+                <p>I rediscovered creative tech recently after a long break, and honestly, it feels like coming home. Those hours I spent on Tumblr customizing everything? They were teaching me more than I realized. I'm drawn to interactive art, the kind that asks you to participate. That's what I want to build here. If you're excited by new tools, experimental projects, and learning as you go, you're exactly where you should be.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 2: INTERACTIVE -->
+          <section class="info-interactive-section">
+
+            <!-- Left Side: Camera + Weekly Wonder + Moire -->
+            <div class="interactive-left">
+
+              <!-- Camera Settings Button -->
+              <button id="reopenPopup" class="reopen-camera-btn-new">
                 Camera Settings
               </button>
 
-              <!-- Intro (Centered at top) -->
-              <div class="about-intro">
-                <p>I'm Gabriella — a creative technologist / digital marketer who treats the internet like a living scrapbook. Weekly Wonder is where I collect what I'm watching, reading, listening to, and building while I teach myself new tools. I like systems and I like mess. Both are true.</p>
+              <!-- Moire Effect -->
+              <div class="moire-effect-info">
+                <img src="images/ascii-me.png" class="moire-img base" alt="">
+                <img src="images/ascii-me-2.png" class="moire-img moire-overlay" alt="">
               </div>
 
-              <!-- Privacy Note -->
-              <div class="privacy-note">
-                <p><small>Runs locally in your browser. Nothing is recorded or stored. You can keep camera off.</small></p>
-              </div>
-
-              <!-- Interactive Brain Visualization -->
-              <div class="brain-interactive">
-
-                <!-- Brain Image (Centered) -->
-                <div class="brain-center">
-                  <img src="images/brain.png" alt="Brain diagram" class="brain-image" />
-
-                  <!-- Invisible hover zones for mouse interaction -->
-                  <div class="brain-hover-zone left-zone" data-zone="left"></div>
-                  <div class="brain-hover-zone right-zone" data-zone="right"></div>
-                </div>
-
-                <!-- Left Brain Panel (Hidden by default, slides from center-left) -->
-                <div class="brain-panel left-brain-panel">
-                  <svg class="brain-arrow left-arrow" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M 5 25 Q 30 10, 95 25" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 85 18 L 95 25 L 85 32" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <div class="brain-content">
-                    <h3 style="color: #00BFFF;">Left Brain</h3>
-                    <ul>
-                      <li><strong>builds:</strong> p5.js experiments, small web tools, interactive layouts</li>
-                      <li><strong>workflow:</strong> structure, iteration, clean UI constraints</li>
-                      <li><strong>interests:</strong> creative coding, prototyping, systems thinking</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Right Brain Panel (Hidden by default, slides from center-right) -->
-                <div class="brain-panel right-brain-panel">
-                  <div class="brain-content">
-                    <h3 style="color: #FF69B4;">Right Brain</h3>
-                    <ul>
-                      <li><strong>taste:</strong> indie/alt/punk, 90s nostalgia, editorial obsession</li>
-                      <li><strong>practices:</strong> archiving, reference libraries, media recaps</li>
-                      <li><strong>interests:</strong> storytelling, visuals, mood, playful internet ephemera</li>
-                    </ul>
-                  </div>
-                  <svg class="brain-arrow right-arrow" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M 95 25 Q 70 10, 5 25" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M 15 18 L 5 25 L 15 32" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-
-              </div>
-
-              <!-- Contact Info (Bottom Left of brain area) -->
-              <div class="contact-section">
-                <h3>Contact</h3>
-                <p><strong>Email:</strong> lyayb99@gmail.com</p>
-                <p><strong>Instagram:</strong> @lyayb</p>
+              <!-- Contact Circles - Under Moire -->
+              <div class="contact-circles">
+                <a href="mailto:lyayb99@gmail.com" class="contact-circle">
+                  <span>Email</span>
+                </a>
+                <a href="https://www.instagram.com/lyayb/" target="_blank" rel="noopener noreferrer" class="contact-circle">
+                  <span>IG</span>
+                </a>
+                <a href="https://www.speakpipe.com/Weeklywonder" target="_blank" rel="noopener noreferrer" class="contact-circle">
+                  <span>Hotline</span>
+                </a>
               </div>
 
             </div>
 
+            <!-- Right Side: Interactive Folder -->
+            <div class="interactive-right">
+
+              <div class="brain-box" id="folderBox">
+                <h2 class="brain-title" id="interactiveTitle">THIS IS AN<br>INTERACTIVE SPACE</h2>
+
+                <!-- STATE 1: Closed Folder -->
+                <div class="folder-container" id="folderContainer">
+                  <img src="images/folder.png" alt="Folder" class="folder-image" id="folderImage" />
+                </div>
+
+                <!-- STATE 2: Open Carousel -->
+                <div class="carousel-container" id="carouselContainer">
+                  <div class="carousel-orbit">
+                    <div class="carousel-item" data-index="0">
+                      <img src="images/forks.png" alt="Forks" />
+                    </div>
+                    <div class="carousel-item" data-index="1">
+                      <img src="images/jacket.png" alt="Jacket" />
+                    </div>
+                    <div class="carousel-item" data-index="2">
+                      <img src="images/compact.png" alt="Compact" />
+                    </div>
+                    <div class="carousel-item" data-index="3">
+                      <img src="images/book.jpg" alt="Book" />
+                    </div>
+                    <div class="carousel-item" data-index="4">
+                      <img src="images/cdwheel.png" alt="CD Wheel" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
-          </div>
+
+          </section>
+
         </div>
       </section>
     </main>
@@ -165,7 +224,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 
-  <!-- Tiny Player Drag (from weekly-feed.js) -->
+  <!-- Tiny Player Drag -->
   <script>
     const tinyPlayer = document.getElementById("tinyPlayer");
     const tinyHeader = document.getElementById("tinyHeader");
@@ -246,7 +305,316 @@
     })();
   </script>
 
+  <!-- Moire Effect Script -->
+  <script>
+    // Simple moire effect on mousemove
+    (function() {
+      const moireContainer = document.querySelector('.moire-effect-info');
+      const moireOverlay = moireContainer ? moireContainer.querySelector('.moire-overlay') : null;
+
+      if (moireOverlay && moireContainer) {
+        moireContainer.addEventListener('mousemove', (e) => {
+          const rect = moireContainer.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const offsetX = (x / rect.width - 0.5) * 20;
+          const offsetY = (y / rect.height - 0.5) * 20;
+
+          moireOverlay.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        });
+
+        moireContainer.addEventListener('mouseleave', () => {
+          moireOverlay.style.transform = 'translate(0, 0)';
+        });
+      }
+    })();
+  </script>
+
+  <!-- Folder & Carousel Interaction Script -->
+  <script>
+    (function() {
+      const folderContainer = document.getElementById('folderContainer');
+      const carouselContainer = document.getElementById('carouselContainer');
+      const interactiveTitle = document.getElementById('interactiveTitle');
+      const carouselItems = document.querySelectorAll('.carousel-item');
+
+      let isCarouselOpen = false;
+      let rotationAngle = 0;
+      let animationFrameId = null;
+      let pointerX = null;
+      let pointerY = null;
+      let highlightedItem = null;
+      let isPaused = false;
+      let targetRotationSpeed = 0.0005; // Target rotation speed
+      let currentRotationSpeed = 0.0005; // Current rotation speed (for smooth deceleration)
+
+      const radius = 160; // Orbit radius in pixels (adjusted for smaller carousel)
+      const baseRotationSpeed = 0.0005; // Radians per millisecond (~12.5 seconds per rotation)
+      const proximityThreshold = 160; // Distance to trigger highlight
+
+      // Item names mapping
+      const itemNames = {
+        0: '005 cutlery from niceworkshop.net',
+        1: 'Betsey Johnson Alley Cat Wool Plaid Coat',
+        2: '1940s Sterling silver compact case',
+        3: 'The Creative Habit by Twyla Tharp',
+        4: 'CD ferris wheel rack'
+      };
+
+      // Open carousel when folder is clicked
+      if (folderContainer) {
+        folderContainer.addEventListener('click', openCarousel);
+      }
+
+      function openCarousel() {
+        if (isCarouselOpen) return;
+
+        isCarouselOpen = true;
+
+        // Change title
+        interactiveTitle.innerHTML = 'My current favs<br><span style="font-size: 16px; font-weight: 400; opacity: 0.7;">These are some items that I\'m loving</span>';
+
+        // Fade out folder
+        folderContainer.classList.add('hidden');
+
+        // Show carousel after folder fades
+        setTimeout(() => {
+          folderContainer.style.display = 'none';
+          carouselContainer.classList.add('active');
+          startCarousel();
+        }, 500);
+      }
+
+      function startCarousel() {
+        let lastTime = performance.now();
+
+        function animate(currentTime) {
+          const deltaTime = currentTime - lastTime;
+          lastTime = currentTime;
+
+          // Smooth rotation speed transition (deceleration/acceleration)
+          const speedDiff = targetRotationSpeed - currentRotationSpeed;
+          currentRotationSpeed += speedDiff * 0.1; // Smooth interpolation
+
+          // Update rotation angle (only if not paused)
+          if (!isPaused) {
+            rotationAngle += currentRotationSpeed * deltaTime;
+          }
+
+          // Check for item proximity if pointer exists
+          let closestItem = null;
+          let closestDistance = Infinity;
+
+          if (pointerX !== null && pointerY !== null) {
+            const orbitRect = carouselContainer.getBoundingClientRect();
+            const centerX = orbitRect.width / 2;
+            const centerY = orbitRect.height / 2;
+
+            carouselItems.forEach((item, index) => {
+              const baseAngle = rotationAngle + (index * (Math.PI * 2 / 5));
+              const itemX = centerX + Math.cos(baseAngle) * radius;
+              const itemY = centerY + Math.sin(baseAngle) * radius;
+
+              const dx = pointerX - itemX;
+              const dy = pointerY - itemY;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+
+              if (distance < closestDistance) {
+                closestDistance = distance;
+                closestItem = item;
+              }
+            });
+
+            // Highlight if within threshold
+            if (closestDistance < proximityThreshold) {
+              highlightItem(closestItem);
+            } else {
+              unhighlightAll();
+            }
+          } else {
+            unhighlightAll();
+          }
+
+          // Position each item in orbit
+          carouselItems.forEach((item, index) => {
+            const baseAngle = rotationAngle + (index * (Math.PI * 2 / 5));
+            let x = Math.cos(baseAngle) * radius;
+            let y = Math.sin(baseAngle) * radius;
+
+            // Adjust offset based on item size
+            const itemIndex = parseInt(item.dataset.index);
+            const offset = (itemIndex <= 2) ? 90 : 65;
+
+            // If this item is highlighted, center it
+            if (item.classList.contains('highlighted')) {
+              item.style.transform = `translate(-${offset}px, -${offset}px) scale(1.8)`;
+            } else {
+              item.style.transform = `translate(${x - offset}px, ${y - offset}px)`;
+            }
+          });
+
+          animationFrameId = requestAnimationFrame(animate);
+        }
+
+        animationFrameId = requestAnimationFrame(animate);
+      }
+
+      function highlightItem(item) {
+        if (highlightedItem === item) return;
+
+        // Unhighlight previous item
+        if (highlightedItem) {
+          highlightedItem.classList.remove('highlighted');
+          const prevLabel = highlightedItem.querySelector('.item-label');
+          if (prevLabel) prevLabel.remove();
+        }
+
+        // Highlight new item
+        item.classList.add('highlighted');
+        highlightedItem = item;
+
+        // Pause carousel
+        isPaused = true;
+        targetRotationSpeed = 0;
+
+        // Fade other items
+        carouselItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.add('faded');
+          } else {
+            otherItem.classList.remove('faded');
+          }
+        });
+
+        // Show item name
+        const itemIndex = parseInt(item.dataset.index);
+        const itemName = itemNames[itemIndex];
+        const label = document.createElement('div');
+        label.className = 'item-label';
+        label.textContent = itemName;
+        item.appendChild(label);
+      }
+
+      function unhighlightAll() {
+        if (!highlightedItem) return;
+
+        // Remove highlight
+        carouselItems.forEach(item => {
+          item.classList.remove('highlighted', 'faded');
+          const label = item.querySelector('.item-label');
+          if (label) label.remove();
+        });
+
+        highlightedItem = null;
+        isPaused = false;
+        targetRotationSpeed = baseRotationSpeed;
+      }
+
+      // Mouse hover interaction (fallback when camera off)
+      carouselContainer.addEventListener('mousemove', (e) => {
+        const rect = carouselContainer.getBoundingClientRect();
+        pointerX = e.clientX - rect.left;
+        pointerY = e.clientY - rect.top;
+      });
+
+      carouselContainer.addEventListener('mouseleave', () => {
+        pointerX = null;
+        pointerY = null;
+      });
+
+      // Hand tracking - thumbs up gesture (MediaPipe)
+      window.addEventListener('thumbsUpPosition', (e) => {
+        if (isCarouselOpen && e.detail) {
+          const rect = carouselContainer.getBoundingClientRect();
+          const screenX = e.detail.x * window.innerWidth;
+          const screenY = e.detail.y * window.innerHeight;
+          pointerX = screenX - rect.left;
+          pointerY = screenY - rect.top;
+        }
+      });
+
+      window.addEventListener('thumbsUpLost', () => {
+        pointerX = null;
+        pointerY = null;
+      });
+
+      window.addEventListener('handLost', () => {
+        pointerX = null;
+        pointerY = null;
+      });
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      });
+
+    })();
+  </script>
+
+  <!-- Typing Effect for Hero Title -->
+  <script>
+    (function() {
+      // Check if typing effect has already been played
+      if (sessionStorage.getItem('typingEffectPlayed')) {
+        return; // Don't play again
+      }
+
+      const heroTitle = document.querySelector('.hero-title');
+      if (!heroTitle) return;
+
+      // Hide the original text
+      heroTitle.style.opacity = '0';
+
+      // Wait a moment before starting
+      setTimeout(() => {
+        const line1 = "HI, I'M";
+        const line2 = "GABRIELLA";
+
+        // Clear and create structure for typing
+        heroTitle.innerHTML = '<span id="typeLine1"></span><br><span id="typeLine2"></span>';
+        heroTitle.style.opacity = '1';
+
+        const line1Element = document.getElementById('typeLine1');
+        const line2Element = document.getElementById('typeLine2');
+
+        let index1 = 0;
+        let index2 = 0;
+
+        function typeLine1() {
+          if (index1 < line1.length) {
+            line1Element.textContent += line1[index1];
+            index1++;
+            setTimeout(typeLine1, 80);
+          } else {
+            // Start line 2 after a brief pause
+            setTimeout(typeLine2, 200);
+          }
+        }
+
+        function typeLine2() {
+          if (index2 < line2.length) {
+            line2Element.textContent += line2[index2];
+            index2++;
+            setTimeout(typeLine2, 80);
+          } else {
+            // Mark as played for this session
+            sessionStorage.setItem('typingEffectPlayed', 'true');
+          }
+        }
+
+        // Start typing
+        typeLine1();
+      }, 300);
+    })();
+  </script>
+
+  <!-- Tiny Player drag functionality -->
+  <script src="weekly-feed.js"></script>
+
   <!-- MediaPipe Hand Detection Logic -->
-  <script src="info-mediapipe.js"></script>
+  <script src="info-mediapipe.js?v=3"></script>
 </body>
 </html>

@@ -3,8 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Page Title -->
   <title>Weekly Wonder</title>
+
+  <!-- SEO Description -->
+  <meta name="description" content="Weekly Wonder archives music, films, writing, whatever grabs my attention. Explore creative tech experiments and interactive tools.">
+
+  <!-- Social Media Preview (Open Graph) -->
+  <meta property="og:title" content="Weekly Wonder">
+  <meta property="og:description" content="Archives of music, films, writing, and creative tech experiments. A digital scrapbook of curiosities.">
+  <meta property="og:image" content="https://weeklywonder.org/preview.png">
+  <meta property="og:url" content="https://weeklywonder.org">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Weekly Wonder">
+  <meta name="twitter:description" content="Archives of music, films, writing, and creative tech experiments.">
+  <meta name="twitter:image" content="https://weeklywonder.org/preview.png">
+
+  <!-- Favicon (all sizes) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Security Headers - CSP Temporarily Disabled for Debugging -->
+  <!--
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://open.spotify.com;
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data: https:;
+                 frame-src https://open.spotify.com;
+                 connect-src 'self' https://docs.google.com https://*.google.com;">
+  -->
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 
 <body>
@@ -45,7 +87,14 @@ more will get added as I go</pre>
       <!-- TOP NAV (locked structure) -->
       <nav class="top-nav" aria-label="Primary">
   <a class="nav-link is-active" href="index.html">Weekly Wonder</a>
-  <a class="nav-link" href="tools.html">Tools</a>
+  <div class="nav-link-wrapper">
+    <a class="nav-link" href="tools.html" id="toolsLink">Tools</a>
+    <div class="tools-dropdown" id="toolsDropdown">
+      <a href="tools.html#crossStitch" class="dropdown-item">Cross stitch</a>
+      <a href="tools.html#ascii" class="dropdown-item">ASCII</a>
+      <a href="tools.html#idMe" class="dropdown-item">ID Me</a>
+    </div>
+  </div>
   <a class="nav-link" href="info.html">Info / Contact</a>
 </nav>
 
@@ -53,13 +102,16 @@ more will get added as I go</pre>
 
       <!-- WEEKLY WONDER VIEW -->
       <section class="view is-active" id="weeklyView">
-        <div class="big-frame">
-          <div class="scroll-area">
-  <div id="weekly-feed"></div>
-</div>
-
-
-
+        <!-- Mac OS Browser Chrome Window -->
+        <div class="mac-window">
+          <div class="mac-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="mac-title">Weekly Wonder</span>
+          </div>
+          <div class="mac-body">
+            <div id="weekly-feed"></div>
           </div>
         </div>
       </section>
@@ -67,13 +119,6 @@ more will get added as I go</pre>
       <!-- TOOLS VIEW -->
       <section class="view" id="toolsView">
         <div class="tools-wrap">
-
-          <!-- TOOLS TABS -->
-          <div class="tools-tabs" role="tablist" aria-label="Tools">
-            <button class="tool-tab is-active" data-tool="crossStitchTool" role="tab" aria-selected="true">Cross stitch</button>
-            <button class="tool-tab" data-tool="asciiTool" role="tab" aria-selected="false">ASCII</button>
-            <button class="tool-tab" data-tool="idTool" role="tab" aria-selected="false">ID Me</button>
-          </div>
 
           <!-- CROSS STITCH -->
           <section class="tool-view is-active" id="crossStitchTool" role="tabpanel">
@@ -283,4 +328,4 @@ more will get added as I go</pre>
 <script src="moire.js"></script>
 
 </body>
-<html>
+</html>

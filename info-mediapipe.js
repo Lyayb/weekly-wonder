@@ -5,6 +5,7 @@
 (function() {
   const aboutContainer = document.querySelector(".about-container");
   const brainInteractive = document.querySelector(".brain-interactive");
+  const folderBox = document.getElementById("folderBox"); // New: for carousel
   const video = document.getElementById("cameraVideo");
 
   let cameraActive = false;
@@ -36,12 +37,63 @@
     hands.onResults(onHandsDetected);
   }
 
+  // Detect thumbs up gesture
+  function isThumbsUp(landmarks) {
+    if (!landmarks || landmarks.length < 21) return false;
+
+    const thumbTip = landmarks[4];
+    const thumbIP = landmarks[3];
+    const indexTip = landmarks[8];
+    const indexMCP = landmarks[5];
+    const middleTip = landmarks[12];
+    const ringTip = landmarks[16];
+    const pinkyTip = landmarks[20];
+
+    // Thumb should be extended upward (tip higher than IP joint)
+    const thumbExtended = thumbTip.y < thumbIP.y - 0.05;
+
+    // Other fingers should be curled down (tips below MCP)
+    const fingersDown = indexTip.y > indexMCP.y + 0.05 &&
+                        middleTip.y > indexMCP.y + 0.05 &&
+                        ringTip.y > indexMCP.y + 0.05 &&
+                        pinkyTip.y > indexMCP.y + 0.05;
+
+    return thumbExtended && fingersDown;
+  }
+
   // Handle detection results
   function onHandsDetected(results) {
     if (!results.multiHandedness || results.multiHandedness.length === 0) {
       // No hands detected
       updateState("neutral");
+      // Dispatch hand lost event for carousel
+      window.dispatchEvent(new CustomEvent('handLost'));
       return;
+    }
+
+    // Get first hand for carousel interaction
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+      const handLandmarks = results.multiHandLandmarks[0];
+
+      // Check if thumbs up gesture
+      const isThumbsUpGesture = isThumbsUp(handLandmarks);
+
+      if (isThumbsUpGesture) {
+        // Get thumb tip position (landmark 4)
+        const thumbTip = handLandmarks[4];
+
+        // Dispatch thumbs up position event
+        window.dispatchEvent(new CustomEvent('thumbsUpPosition', {
+          detail: {
+            x: thumbTip.x,
+            y: thumbTip.y,
+            z: thumbTip.z
+          }
+        }));
+      } else {
+        // No thumbs up gesture
+        window.dispatchEvent(new CustomEvent('thumbsUpLost'));
+      }
     }
 
     // Check handedness - FLIPPED for mirror effect
@@ -65,8 +117,10 @@
     if (currentState === newState) return;
     currentState = newState;
 
-    // Keep existing attribute for backwards compatibility
-    aboutContainer.setAttribute("data-emphasis", newState);
+    // Keep existing attribute for backwards compatibility (only if element exists)
+    if (aboutContainer) {
+      aboutContainer.setAttribute("data-emphasis", newState);
+    }
 
     // Clear any existing timer
     if (hideTimer) {
@@ -74,7 +128,7 @@
       hideTimer = null;
     }
 
-    // Add visual class management for brain panels
+    // Add visual class management for brain panels (only if element exists)
     if (brainInteractive) {
       brainInteractive.classList.remove("show-left", "show-right");
 
@@ -101,7 +155,18 @@
 
   // Start camera
   async function startCamera() {
+    console.log("[MediaPipe] Attempting to start camera...");
+
+    // Check if mediaDevices is available
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error("[MediaPipe] getUserMedia not supported");
+      alert("Camera not supported in this browser. Try Chrome, Firefox, or Safari.");
+      updateState("off");
+      return;
+    }
+
     try {
+      console.log("[MediaPipe] Requesting camera permission...");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: 640,
@@ -109,8 +174,18 @@
         }
       });
 
+      console.log("[MediaPipe] Camera permission granted, stream:", stream);
+
+      if (!video) {
+        console.error("[MediaPipe] Video element not found");
+        alert("Video element not found. Please refresh the page.");
+        return;
+      }
+
       video.srcObject = stream;
       await video.play();
+
+      console.log("[MediaPipe] Video playing, initializing MediaPipe camera...");
 
       camera = new Camera(video, {
         onFrame: async () => {
@@ -126,10 +201,27 @@
       cameraActive = true;
       updateState("neutral");
 
-      console.log("[MediaPipe] Camera started");
+      console.log("[MediaPipe] Camera started successfully");
     } catch (err) {
-      console.error("[MediaPipe] Camera error:", err);
-      alert("Could not access camera. Check browser permissions.");
+      console.error("[MediaPipe] Camera error details:", err);
+      console.error("[MediaPipe] Error name:", err.name);
+      console.error("[MediaPipe] Error message:", err.message);
+
+      let errorMessage = "Could not access camera. ";
+
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        errorMessage += "Permission denied. Please allow camera access in browser settings.";
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        errorMessage += "No camera found on this device.";
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+        errorMessage += "Camera is already in use by another application. Close other apps using the camera.";
+      } else if (err.name === "SecurityError") {
+        errorMessage += "Please use HTTPS or localhost. Open: http://localhost:8000/info.html";
+      } else {
+        errorMessage += err.message || "Unknown error occurred.";
+      }
+
+      alert(errorMessage);
       updateState("off");
     }
   }

@@ -3,8 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weekly Wonder — Tools</title>
+
+  <!-- Page Title -->
+  <title>Tools - Weekly Wonder</title>
+
+  <!-- SEO Description -->
+  <meta name="description" content="Creative tech tools and experiments. Turn images into ASCII art, generate cross-stitch patterns, and explore interactive projects.">
+
+  <!-- Social Media Preview (Open Graph) -->
+  <meta property="og:title" content="Tools - Weekly Wonder">
+  <meta property="og:description" content="Creative tech tools. ASCII art, cross-stitch patterns, and interactive experiments.">
+  <meta property="og:image" content="https://weeklywonder.org/preview.png">
+  <meta property="og:url" content="https://weeklywonder.org/tools.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tools - Weekly Wonder">
+  <meta name="twitter:description" content="Creative tech tools. ASCII art, cross-stitch patterns, and interactive experiments.">
+  <meta name="twitter:image" content="https://weeklywonder.org/preview.png">
+
+  <!-- Favicon (all sizes) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data: https:;
+                 frame-src https://open.spotify.com;
+                 connect-src 'self';">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 
 <body class="tools-page">
@@ -18,17 +58,18 @@
 
       <nav class="top-nav" aria-label="Primary">
         <a class="nav-link" href="index.html">Weekly Wonder</a>
-        <a class="nav-link is-active" href="tools.html">Tools</a>
+        <div class="nav-link-wrapper">
+          <a class="nav-link is-active" href="tools.html" id="toolsLink">Tools</a>
+          <div class="tools-dropdown" id="toolsDropdown">
+            <a href="tools.html#crossStitch" class="dropdown-item">Cross stitch</a>
+            <a href="tools.html#ascii" class="dropdown-item">ASCII</a>
+            <a href="tools.html#idMe" class="dropdown-item">ID Me</a>
+          </div>
+        </div>
         <a class="nav-link" href="info.html">Info / Contact</a>
       </nav>
 
       <section class="tools-shell">
-
-        <div class="tools-tabs" role="tablist" aria-label="Tools">
-          <button class="tool-tab is-active" data-tool="crossStitchTool" role="tab" aria-selected="true">Cross stitch</button>
-          <button class="tool-tab" data-tool="asciiTool" role="tab" aria-selected="false">ASCII</button>
-          <button class="tool-tab" data-tool="idTool" role="tab" aria-selected="false">ID Me</button>
-        </div>
 
         <!-- CROSS STITCH -->
         <section class="tool-view is-active" id="crossStitchTool" role="tabpanel">
@@ -241,6 +282,7 @@
 
   </div>
 
+  <script src="weekly-feed.js"></script>
   <script src="tools.js"></script>
 </body>
 </html>
