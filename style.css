@@ -2255,9 +2255,19 @@ body.tools-page .frame{
   min-height: 360px; /* keeps it looking like your mock even on smaller screens */
 }
 
-/* ID tool canvas needs more height for portrait orientation */
+/* ID tool canvas - portrait orientation needs proper containment */
 body.tools-page #idTool .panel:nth-child(3) .frame {
   min-height: 500px;
+  max-height: 600px;
+  overflow: auto;
+}
+
+/* Make canvas fit within frame */
+body.tools-page #idTool #idCardCanvas {
+  max-height: 100%;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
 }
 /* ================================
    TOOL TAB DIVIDER (BLACK LINE)
