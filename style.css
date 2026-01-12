@@ -1740,12 +1740,12 @@ body.info-page .info-pad {
     opacity: 0.3;
   }
 
-  /* Buttons - compact */
+  /* Buttons - compact and smaller */
   .btn {
     width: 100%;
-    padding: 10px;
-    font-size: 13px;
-    margin-top: 10px;
+    padding: 8px;
+    font-size: 12px;
+    margin-top: 8px;
     font-weight: 600;
   }
 
