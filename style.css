@@ -1650,6 +1650,7 @@ body.info-page .info-pad {
   .tools-wrap {
     padding: 16px !important;
     border-radius: 0 !important;
+    border: none !important;
   }
 
   .tools-header {
