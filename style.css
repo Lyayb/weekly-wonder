@@ -1651,6 +1651,8 @@ body.info-page .info-pad {
     padding: 16px !important;
     border-radius: 0 !important;
     border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
   }
 
   .tools-header {
@@ -1706,9 +1708,15 @@ body.info-page .info-pad {
   .field input[type="date"],
   .field input[type="range"],
   .field select {
-    font-size: 13px;
-    padding: 6px 8px;
+    font-size: 12px;
+    padding: 5px 6px;
     width: 100%;
+  }
+
+  /* Make date input more compact */
+  .field input[type="date"] {
+    font-size: 11px;
+    padding: 4px 6px;
   }
 
   /* Frame containers - minimal height, clean borders */
