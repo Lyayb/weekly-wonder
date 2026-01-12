@@ -216,7 +216,7 @@
       } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
         errorMessage += "Camera is already in use by another application. Close other apps using the camera.";
       } else if (err.name === "SecurityError") {
-        errorMessage += "Please use HTTPS or localhost. Open: http://localhost:8000/info.html";
+        errorMessage += "Camera requires HTTPS. Please ensure you're accessing the site securely.";
       } else {
         errorMessage += err.message || "Unknown error occurred.";
       }
