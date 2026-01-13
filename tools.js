@@ -481,7 +481,7 @@ function initIDTool() {
     const photoOffsetX = pad + (innerW - actualPhotoW) / 2;
 
     // Title "WEEKLY WONDER ID" positioned below photo, aligned with DOB
-    const titleY = pad + photoH + pad * 0.5;
+    const titleY = pad + photoH + pad * 0.8;
     cctx.fillStyle = "#000";
     const titleFontSize = Math.max(11, Math.floor(w * 0.028));
     cctx.font = `bold ${titleFontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
