@@ -351,11 +351,12 @@ function initIDTool() {
 
     // NO SEPARATOR LINE - removed for passport photo look
 
-    // Title positioned directly below photo
+    // Title positioned directly below photo, aligned with DOB and photo edge
     const titleY = imgY + imgH + pad * 1.2;
     octx.fillStyle = "#000";
     octx.font = `bold ${Math.floor(exportWidth * 0.04)}px ui-monospace, Menlo, Monaco`;
-    octx.fillText("WEEKLY WONDER ID", pad, titleY);
+    octx.textAlign = "left";
+    octx.fillText("WEEKLY WONDER ID", imgX, titleY);
 
     // Info section
     const dob = dobInput?.value || new Date().toISOString().split('T')[0];
@@ -478,6 +479,17 @@ function initIDTool() {
       actualPhotoW = photoH * photoRatio;
     }
     const photoOffsetX = pad + (innerW - actualPhotoW) / 2;
+
+    // Title "WEEKLY WONDER ID" positioned below photo, aligned with DOB
+    const titleY = pad + photoH + pad * 0.5;
+    cctx.fillStyle = "#000";
+    const titleFontSize = Math.max(11, Math.floor(w * 0.028));
+    cctx.font = `bold ${titleFontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
+    cctx.textAlign = "left";
+    cctx.fillText("WEEKLY WONDER ID", photoOffsetX, titleY);
+
+    // Reset font for info text
+    cctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
 
     // Draw left column - align to photo left edge
     cctx.textAlign = "left";
