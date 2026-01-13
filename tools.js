@@ -453,8 +453,8 @@ function initIDTool() {
     ];
 
     cctx.fillStyle = "#000";
-    // Scale font size based on canvas width
-    const fontSize = Math.max(10, Math.floor(w * 0.026));
+    // Scale font size based on canvas width - smaller on mobile to prevent overlap
+    const fontSize = Math.max(9, Math.floor(w * 0.022));
     cctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
 
     // Text starts directly below photo
@@ -462,19 +462,36 @@ function initIDTool() {
     const textAreaHeight = h - textStartY - pad;
     const lineSpacing = Math.min(18, Math.floor(textAreaHeight / (leftLines.length + 1)));
 
-    // Draw left column
+    // Calculate actual photo dimensions to align columns to photo edges
+    const photoCanvas2 = document.createElement("canvas");
+    photoCanvas2.width = innerW;
+    photoCanvas2.height = photoH;
+    const ph2 = photoCanvas2.getContext("2d");
+    drawContain(ph2, sourceImg, innerW, photoH);
+
+    // Get actual photo size within the area
+    const photoRatio = sourceImg.width / sourceImg.height;
+    let actualPhotoW = innerW;
+    let actualPhotoH = innerW / photoRatio;
+    if (actualPhotoH > photoH) {
+      actualPhotoH = photoH;
+      actualPhotoW = photoH * photoRatio;
+    }
+    const photoOffsetX = pad + (innerW - actualPhotoW) / 2;
+
+    // Draw left column - align to photo left edge
     cctx.textAlign = "left";
     let y = textStartY;
-    const xLeft = pad;
+    const xLeft = photoOffsetX;
     for (const line of leftLines) {
       cctx.fillText(line, xLeft, y);
       y += lineSpacing;
     }
 
-    // Draw right column (aligned closer to left, under photo)
+    // Draw right column - align to photo right edge
     cctx.textAlign = "right";
     let yRight = textStartY;
-    const xRight = w - pad;
+    const xRight = photoOffsetX + actualPhotoW;
     for (const line of rightLines) {
       cctx.fillText(line, xRight, yRight);
       yRight += lineSpacing;
