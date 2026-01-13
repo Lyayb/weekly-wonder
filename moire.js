@@ -25,11 +25,11 @@
 
   function drift() {
     t += 0.01;
-    const driftX = Math.sin(t) * 2;
-    const driftY = Math.cos(t) * 2;
+    const driftX = Math.sin(t) * 3;
+    const driftY = Math.cos(t) * 3;
 
-    // Smooth scroll offset interpolation
-    scrollOffset += (targetScrollOffset - scrollOffset) * 0.1;
+    // Smooth scroll offset interpolation - faster response
+    scrollOffset += (targetScrollOffset - scrollOffset) * 0.15;
 
     const x = driftX;
     const y = driftY + scrollOffset;
@@ -44,14 +44,14 @@
     const currentScrollY = window.scrollY;
     const scrollDelta = currentScrollY - lastScrollY;
 
-    // Add scroll delta to target offset (capped for subtle effect)
-    targetScrollOffset = Math.max(-8, Math.min(8, scrollDelta * 0.3));
+    // Add scroll delta to target offset - increased range and sensitivity
+    targetScrollOffset = Math.max(-20, Math.min(20, scrollDelta * 0.8));
 
     lastScrollY = currentScrollY;
 
     // Decay the offset back to 0 after scroll stops
     setTimeout(() => {
-      targetScrollOffset *= 0.8;
+      targetScrollOffset *= 0.85;
     }, 50);
   }
 
