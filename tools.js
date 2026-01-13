@@ -358,11 +358,11 @@ function initIDTool() {
     octx.textAlign = "left";
     octx.fillText("WEEKLY WONDER ID", imgX, titleY);
 
-    // Info section
+    // Info section - add more spacing below title
     const dob = dobInput?.value || new Date().toISOString().split('T')[0];
     const now = new Date();
-    const infoStartY = titleY + pad * 1.5;
-    const lineHeight = exportWidth * 0.035;
+    const infoStartY = titleY + pad * 2.2;
+    const lineHeight = exportWidth * 0.038;
 
     octx.font = `${Math.floor(exportWidth * 0.022)}px ui-monospace, Menlo, Monaco`;
 
@@ -373,7 +373,7 @@ function initIDTool() {
     octx.fillText(`SIGN: ${zodiacSign(new Date(dob))}`, xLeft, infoStartY + lineHeight);
     octx.fillText(`DATE: ${now.toISOString().split('T')[0]}`, xLeft, infoStartY + lineHeight * 2);
     octx.fillText(`TIME: ${now.toTimeString().slice(0,8)}`, xLeft, infoStartY + lineHeight * 3);
-    octx.fillText(`REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`, xLeft, infoStartY + lineHeight * 4);
+    octx.fillText(`REF: ${randBlock(2, 14)}-1SN`, xLeft, infoStartY + lineHeight * 4);
     octx.fillText(`AID: ${randDigits(12)}`, xLeft, infoStartY + lineHeight * 5);
     octx.fillText(`CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`, xLeft, infoStartY + lineHeight * 6);
     octx.fillText(`WEEKLYWONDER.ORG`, xLeft, infoStartY + lineHeight * 7);
@@ -439,7 +439,7 @@ function initIDTool() {
       `SIGN: ${sign}`,
       `DATE: ${dateStr}`,
       `TIME: ${timeStr}`,
-      `REF: ${randBlock(2, 14)}-${randBlock(1, 12)}`,
+      `REF: ${randBlock(2, 14)}-1SN`,
       `AID: ${randDigits(12)}`,
       `CTRL: ${randBlock(1, 6)}-${randBlock(1, 6)}-${randBlock(1, 6)}`,
       `WEEKLYWONDER.ORG`,
@@ -458,10 +458,10 @@ function initIDTool() {
     const fontSize = Math.max(9, Math.floor(w * 0.022));
     cctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
 
-    // Text starts directly below photo
-    const textStartY = pad + photoH + pad * 0.8;
+    // Text starts below title with proper spacing - not cramped
+    const textStartY = pad + photoH + pad * 1.8;
     const textAreaHeight = h - textStartY - pad;
-    const lineSpacing = Math.min(18, Math.floor(textAreaHeight / (leftLines.length + 1)));
+    const lineSpacing = Math.max(20, Math.floor(textAreaHeight / (leftLines.length + 1)));
 
     // Calculate actual photo dimensions to align columns to photo edges
     const photoCanvas2 = document.createElement("canvas");
