@@ -1889,6 +1889,11 @@ body.info-page .info-pad {
     margin-bottom: 40px;
   }
 
+  /* ID Tool BOX 3 - needs more height for passport-style ID card */
+  #idTool .panel:nth-child(3) {
+    min-height: 550px !important;
+  }
+
   .panel-title {
     font-size: 11px;
     margin-bottom: 12px;
@@ -1948,6 +1953,11 @@ body.info-page .info-pad {
     border: none !important;
     border-radius: 0;
     min-height: 400px;
+  }
+
+  /* ID Tool specific frame height for portrait ID card */
+  #idTool .panel:nth-child(3) .frame {
+    min-height: 550px !important;
   }
 
   .tool-view .frame canvas {
