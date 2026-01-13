@@ -18,16 +18,45 @@
   // Desktop: mouse move
   window.addEventListener("mousemove", onMove, { passive: true });
 
-  // Mobile fallback: subtle drift (optional, doesn't require touch)
-  // Comment this out if you want it totally static on phones.
+  // Mobile: drift animation + scroll interaction
   let t = 0;
+  let scrollOffset = 0;
+  let targetScrollOffset = 0;
+
   function drift() {
     t += 0.01;
-    const x = Math.sin(t) * 2;
-    const y = Math.cos(t) * 2;
+    const driftX = Math.sin(t) * 2;
+    const driftY = Math.cos(t) * 2;
+
+    // Smooth scroll offset interpolation
+    scrollOffset += (targetScrollOffset - scrollOffset) * 0.1;
+
+    const x = driftX;
+    const y = driftY + scrollOffset;
+
     moireLayer.style.transform = `translate(${x}px, ${y}px) scale(1.01)`;
     requestAnimationFrame(drift);
   }
 
-  if (window.matchMedia("(pointer: coarse)").matches) drift();
+  // Track scroll on mobile
+  let lastScrollY = window.scrollY;
+  function onScroll() {
+    const currentScrollY = window.scrollY;
+    const scrollDelta = currentScrollY - lastScrollY;
+
+    // Add scroll delta to target offset (capped for subtle effect)
+    targetScrollOffset = Math.max(-8, Math.min(8, scrollDelta * 0.3));
+
+    lastScrollY = currentScrollY;
+
+    // Decay the offset back to 0 after scroll stops
+    setTimeout(() => {
+      targetScrollOffset *= 0.8;
+    }, 50);
+  }
+
+  if (window.matchMedia("(pointer: coarse)").matches) {
+    drift();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
 })();
