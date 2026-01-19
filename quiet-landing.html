@@ -475,16 +475,21 @@
     }
 
     @media (max-width: 768px) {
+      body {
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+
       .quiet-container {
-        padding: 16px 12px;
-        overflow-y: auto; /* Allow vertical scrolling on mobile */
-        height: auto; /* Remove fixed height */
+        padding: 16px 0; /* Remove side padding to eliminate line */
+        overflow-y: auto;
+        height: auto;
       }
 
       .quiet-title {
         font-size: 24px;
         margin-bottom: 20px;
         letter-spacing: 2px;
+        padding: 0 12px; /* Add padding to title only */
       }
 
       .quiet-layout {
@@ -492,16 +497,18 @@
       }
 
       .left-column {
-        order: 2; /* Move form below video on mobile */
+        order: 2;
+        padding: 0 12px; /* Add padding to form column */
       }
 
       .right-column {
-        order: 1; /* Show video first on mobile */
+        order: 1;
+        padding: 0; /* No padding on video column */
       }
 
       .mac-browser-body {
         padding: 16px 12px;
-        max-height: none; /* Remove height restriction */
+        max-height: none;
       }
 
       .upload-zone {
@@ -511,57 +518,70 @@
       .character-video-container {
         position: relative;
         margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
       }
 
       #characterVideo {
         width: 100%;
-        max-height: 300px; /* Smaller video on mobile */
+        max-width: 100%;
+        max-height: 400px; /* Taller video on mobile */
         height: auto;
+        display: block;
+        margin: 0 auto; /* Center the video */
       }
 
+      /* Keep transcript overlay ON the video for mobile */
       .transcript-window-overlay {
-        position: relative; /* Change from absolute to relative on mobile */
-        top: 0;
-        left: 0;
-        max-width: 100%;
-        margin-top: 12px; /* Space below video */
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        max-width: 250px;
+        z-index: 5;
       }
 
       .transcript-window-overlay .mac-browser-body {
-        padding: 12px;
+        padding: 10px 12px;
       }
 
       .transcript-window-overlay .transcript-text {
-        font-size: 11px;
+        font-size: 10px;
         line-height: 1.4;
       }
 
-      .enter-btn {
-        padding: 12px 32px;
-        font-size: 12px;
-        letter-spacing: 1px;
-      }
-
-      .enter-section {
-        position: relative; /* Change from absolute to relative */
-        bottom: auto;
-        margin-top: 16px;
-        text-align: center;
-      }
-
-      .enter-hint {
-        font-size: 9px;
-      }
-
+      /* Volume button under video */
       .volume-control {
-        bottom: 60px;
-        right: 12px;
+        position: absolute;
+        bottom: 80px; /* Position under video */
+        right: 16px;
         width: 36px;
         height: 36px;
       }
 
       .volume-icon {
         font-size: 14px;
+      }
+
+      /* Enter button stays on video */
+      .enter-section {
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+      }
+
+      .enter-btn {
+        padding: 10px 28px;
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+
+      .enter-hint {
+        font-size: 8px;
+        margin-top: 6px;
       }
 
       .form-group label {
