@@ -904,7 +904,8 @@ Everything here was left by someone not for attention. Just to exist if you want
 
           console.log('[Quiet Landing] ✓ Image upload saved:', upload);
           console.log('[Quiet Landing] Total uploads now:', uploads.length);
-          alert('Image uploaded successfully! Check the console (F12) to verify.');
+          console.log('[Quiet Landing] localStorage data:', localStorage.getItem('quietUploads'));
+          alert(`✓ Image uploaded! Total uploads: ${uploads.length}\n\nClick "Enter" to view in gallery.`);
 
           // Reset form
           imageInput.value = '';
@@ -969,7 +970,8 @@ Everything here was left by someone not for attention. Just to exist if you want
 
       console.log('[Quiet Landing] ✓ Text upload saved:', upload);
       console.log('[Quiet Landing] Total uploads now:', uploads.length);
-      alert('Text uploaded successfully! Check the console (F12) to verify.');
+      console.log('[Quiet Landing] localStorage data:', localStorage.getItem('quietUploads'));
+      alert(`✓ Text uploaded! Total uploads: ${uploads.length}\n\nClick "Enter" to view in gallery.`);
 
       // Reset form
       textContent.value = '';
