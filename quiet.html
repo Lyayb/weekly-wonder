@@ -371,8 +371,9 @@
       /* Mobile styles - keep same layout, just scaled down */
 
       .upload-window {
-        width: 200px !important; /* Smaller windows for mobile */
-        transform: scale(0.85); /* Scale down slightly */
+        width: 180px !important; /* Smaller windows for mobile */
+        transform: scale(1); /* No scale transform on mobile */
+        opacity: 1 !important; /* Ensure always visible */
       }
 
       .window-header {
@@ -390,14 +391,25 @@
 
       .window-body {
         padding: 12px;
+        overflow: visible; /* Ensure images show */
       }
 
       .window-text {
         font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .window-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-width: 100%;
+        object-fit: cover;
       }
 
       .window-meta {
         font-size: 8px;
+        margin-top: 8px;
       }
 
       .note-content {
@@ -505,6 +517,11 @@
     let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
 
     console.log('[Quiet] Loaded', uploads.length, 'uploads from storage');
+    console.log('[Quiet] Upload data:', uploads);
+
+    // Debug: Check if we're on mobile
+    const isMobile = window.innerWidth <= 768;
+    console.log('[Quiet] Device type:', isMobile ? 'Mobile' : 'Desktop');
 
     // No default examples - only show real user uploads
     /*
@@ -706,9 +723,12 @@
         // Add to container
         windowsContainer.appendChild(windowEl);
         windowElements.push({ element: windowEl, zPosition: zPosition });
+
+        console.log('[Quiet] Created window', index, '- Type:', upload.type, 'Z:', zPosition);
       });
 
       console.log('[Quiet] Created', windowElements.length, '2D HTML upload windows');
+      console.log('[Quiet] Window elements:', windowElements);
     }
 
     // Update window visibility based on camera position
