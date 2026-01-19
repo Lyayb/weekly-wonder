@@ -653,7 +653,7 @@
     function createWindows() {
       uploads.forEach((upload, index) => {
         // Position markers along the path - starting from the far end
-        const zPosition = CONFIG.tunnelLength - (index * CONFIG.noteSpacing + 20); // Start from far end (180)
+        const zPosition = CONFIG.tunnelLength - (index * CONFIG.noteSpacing + 10); // Start closer: 440 for first note
 
         // Position notes in different screen zones for 2D HTML rendering
         const screenPositions = [
@@ -732,8 +732,10 @@
     }
 
     // Update window visibility based on camera position
+    let visibilityLogCount = 0;
     function updateWindowVisibility() {
-      windowElements.forEach(({ element, zPosition }) => {
+      let visibleCount = 0;
+      windowElements.forEach(({ element, zPosition }, index) => {
         // Show windows when camera is within range of their Z position
         const distance = Math.abs(cameraZ - zPosition);
         const visibilityRange = 50; // Increased to 50 to show multiple notes at once
@@ -741,10 +743,17 @@
         if (distance < visibilityRange) {
           element.style.display = 'block';
           element.style.opacity = '1'; // Always fully opaque, no fading
+          visibleCount++;
         } else {
           element.style.display = 'none';
         }
       });
+
+      // Log visibility every 60 frames (about once per second)
+      if (visibilityLogCount % 60 === 0) {
+        console.log('[Quiet] Camera Z:', Math.round(cameraZ), '| Visible windows:', visibleCount);
+      }
+      visibilityLogCount++;
     }
 
     function openNoteOverlay(upload) {
