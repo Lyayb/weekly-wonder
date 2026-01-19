@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiet Archive</title>
+
+  <meta name="description" content="A quiet digital archive. Walk through the tunnel and explore what others have left behind.">
+  <meta property="og:title" content="Quiet Archive">
+  <meta property="og:description" content="A quiet digital archive gallery">
+  <meta property="og:image" content="https://weeklywonder.org/preview.png">
+  <meta property="og:url" content="https://weeklywonder.org/quiet.html">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Three.js -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      overflow: hidden;
+      background: #ffffff;
+      color: #000;
+    }
+
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+
+    #windows-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+
+    /* Mac OS-style window */
+    .upload-window {
+      position: absolute;
+      background: rgb(255, 255, 255); /* Fully opaque white, no transparency */
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      overflow: visible; /* Changed from hidden to show all content */
+      pointer-events: all;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-window:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .window-header {
+      background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+      padding: 8px 12px;
+      border-bottom: 1px solid #b0b0b0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .window-dot.red { background: #ff5f56; border: 1px solid #e0443e; }
+    .window-dot.yellow { background: #ffbd2e; border: 1px solid #dfa123; }
+    .window-dot.green { background: #27c93f; border: 1px solid #1aab2e; }
+
+    .window-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+      margin-left: 8px;
+    }
+
+    .window-body {
+      padding: 16px;
+      max-height: none; /* Remove height restriction to show all content */
+      overflow-y: visible; /* Show all content without scrolling */
+      background: #fff; /* Ensure fully opaque background */
+    }
+
+    .window-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #000;
+    }
+
+    .window-image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .window-meta {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #ddd;
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Exit button */
+    .exit-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+
+    .exit-btn:hover {
+      background: #fff;
+    }
+
+    /* Instructions overlay */
+    .instructions {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #000;
+      z-index: 50;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .instructions.fade-out {
+      opacity: 0;
+    }
+
+    /* Slider control */
+    .slider-control {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      max-width: 80vw;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 16px 24px;
+      border-radius: 12px;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .slider-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      color: #333;
+      text-align: center;
+    }
+
+    .slider-input {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #ddd;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #000;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider-input::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #000;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s;
+    }
+
+    .slider-input::-moz-range-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Progress indicator */
+    .progress-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #000;
+      z-index: 50;
+      font-weight: 600;
+    }
+
+    /* Loading screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.5s;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      color: #000;
+      margin-bottom: 20px;
+    }
+
+    .loading-bar {
+      width: 200px;
+      height: 2px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loading-fill {
+      height: 100%;
+      background: #000;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* Note overlay */
+    .note-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .note-overlay.visible {
+      display: flex;
+    }
+
+    .note-content {
+      background: #fff;
+      color: #000;
+      padding: 40px;
+      border-radius: 8px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh; /* Fit within viewport */
+      overflow-y: auto; /* Allow scrolling to see all content */
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .note-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #000;
+      padding: 5px 10px;
+      line-height: 1;
+    }
+
+    .note-close:hover {
+      opacity: 0.6;
+    }
+
+    .note-text {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .note-image {
+      width: 100%;
+      max-height: 60vh; /* Limit image height to leave room for text */
+      object-fit: contain; /* Maintain aspect ratio */
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .note-meta {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .note-meta span {
+      margin-right: 15px;
+    }
+
+    @media (max-width: 768px) {
+      /* Mobile styles - keep same layout, just scaled down */
+
+      .upload-window {
+        width: 200px !important; /* Smaller windows for mobile */
+        transform: scale(0.85); /* Scale down slightly */
+      }
+
+      .window-header {
+        padding: 6px 10px;
+      }
+
+      .window-dot {
+        width: 8px;
+        height: 8px;
+      }
+
+      .window-title {
+        font-size: 9px;
+      }
+
+      .window-body {
+        padding: 12px;
+      }
+
+      .window-text {
+        font-size: 11px;
+      }
+
+      .window-meta {
+        font-size: 8px;
+      }
+
+      .note-content {
+        padding: 30px 20px;
+        max-width: 95%;
+      }
+
+      .note-image {
+        max-height: 50vh; /* Smaller images on mobile */
+      }
+
+      .note-text {
+        font-size: 16px;
+      }
+
+      .exit-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+      }
+
+      .instructions {
+        font-size: 11px;
+        padding: 10px 20px;
+        bottom: 20px;
+      }
+
+      .slider-control {
+        padding: 12px 16px;
+        max-width: 90%;
+      }
+
+      .slider-label {
+        font-size: 9px;
+      }
+
+      .progress-indicator {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Exit button -->
+  <a href="index.html" class="exit-btn">← Back</a>
+
+  <!-- Loading screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-text">Loading tunnel...</div>
+    <div class="loading-bar">
+      <div class="loading-fill" id="loadingFill"></div>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <h1 style="position: fixed; top: 30px; left: 50%; transform: translateX(-50%); font-family: 'Impact', 'Arial Black', sans-serif; font-size: 48px; font-weight: 900; letter-spacing: 16px; text-transform: uppercase; z-index: 100; color: #000; margin: 0; font-stretch: ultra-expanded;">QUIET ARCHIVE</h1>
+
+  <!-- Canvas container -->
+  <div id="canvas-container"></div>
+
+  <!-- Mac OS windows container (3D positioned) -->
+  <div id="windows-container"></div>
+
+  <!-- Slider Control -->
+  <div class="slider-control" id="sliderControl">
+    <div class="slider-label">Walk Through Gallery</div>
+    <input type="range" class="slider-input" id="walkSlider" min="0" max="100" value="100" step="0.5">
+  </div>
+
+  <!-- Progress indicator -->
+  <div class="progress-indicator" id="progressIndicator">
+    8 / 8
+  </div>
+
+  <!-- Note overlay -->
+  <div class="note-overlay" id="noteOverlay">
+    <div class="note-content">
+      <button class="note-close" id="noteClose">×</button>
+      <div id="noteBody"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    console.log('[Quiet] Initializing minimal 3D tunnel experience');
+    console.log('[Quiet] Three.js version:', THREE.REVISION);
+
+    // ===== CONFIGURATION =====
+    const CONFIG = {
+      tunnelLength: 450,       // Total tunnel length (increased from 200 to 450 for 9 scenes)
+      cameraStartZ: -5,        // Starting position (slightly back to see GLB from start)
+      cameraHeight: 1.6,       // Eye level height
+      cameraX: 0,              // Camera stays centered
+      scrollSpeed: 0.25,       // How fast we move per scroll
+      noteSpacing: 10,         // Space between notes
+      noteScale: 2,            // Size of note planes
+      fogNear: 1,
+      fogFar: 450              // Increased fog distance to see all GLB scenes
+    };
+
+    // ===== UPLOAD DATA =====
+    // Load uploads from localStorage - only show real user uploads
+    let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
+
+    console.log('[Quiet] Loaded', uploads.length, 'uploads from storage');
+
+    // No default examples - only show real user uploads
+    /*
+    if (uploads.length === 0) {
+      uploads = [
+        {
+          type: 'image',
+          content: 'https://i.pravatar.cc/400?img=1',
+          name: 'Gabriella',
+          city: 'Canada'
+        },
+        {
+          type: 'text',
+          content: 'Sometimes I think about how the internet used to feel like a secret garden.',
+          name: 'Sofia',
+          city: 'Portugal'
+        },
+        {
+          type: 'image',
+          content: 'https://i.pravatar.cc/400?img=5',
+          name: 'Maya',
+          city: 'India'
+        },
+        {
+          type: 'text',
+          content: 'Found a polaroid in an old book. The back said "Summer 1987".',
+          name: 'Emma',
+          city: 'New York'
+        },
+        {
+          type: 'image',
+          content: 'https://i.pravatar.cc/400?img=12',
+          name: 'Liam',
+          city: 'Ireland'
+        },
+        {
+          type: 'text',
+          content: 'The sound of rain on a tin roof at 3am is the best lullaby.',
+          name: 'Yuki',
+          city: 'Tokyo'
+        },
+        {
+          type: 'image',
+          content: 'https://i.pravatar.cc/400?img=27',
+          name: 'Chloe',
+          city: 'Paris'
+        },
+        {
+          type: 'text',
+          content: 'Late night drives playlist',
+          name: 'Alex',
+          city: 'Melbourne'
+        }
+      ];
+    }
+    */
+
+    // ===== DOM ELEMENTS =====
+    const container = document.getElementById('canvas-container');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const loadingFill = document.getElementById('loadingFill');
+    const sliderControl = document.getElementById('sliderControl');
+    const walkSlider = document.getElementById('walkSlider');
+    const progressIndicator = document.getElementById('progressIndicator');
+    const noteOverlay = document.getElementById('noteOverlay');
+    const noteClose = document.getElementById('noteClose');
+    const noteBody = document.getElementById('noteBody');
+
+    // ===== THREE.JS SETUP =====
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff); // White backroom
+    scene.fog = new THREE.Fog(0xffffff, CONFIG.fogNear, CONFIG.fogFar);
+
+    const camera = new THREE.PerspectiveCamera(
+      75,  // Field of view
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, CONFIG.cameraHeight, CONFIG.cameraStartZ);
+    camera.rotation.order = 'YXZ'; // Prevent gimbal lock
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    container.appendChild(renderer.domElement);
+
+    console.log('[Quiet] Scene and renderer initialized');
+
+    // ===== LIGHTING =====
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.6);
+    directionalLight1.position.set(-10, 10, 10);
+    directionalLight1.castShadow = true;
+    scene.add(directionalLight1);
+
+    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    directionalLight2.position.set(10, 5, 0);
+    scene.add(directionalLight2);
+
+    // Add a fill light from below for better 3D depth
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    fillLight.position.set(0, -5, 5);
+    scene.add(fillLight);
+
+    // Add a dedicated light for the LEFT side where GLB will be
+    const leftLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    leftLight.position.set(-15, 5, 10);
+    scene.add(leftLight);
+
+    console.log('[Quiet] Lighting added');
+
+    // ===== CAMERA MOVEMENT STATE =====
+    let cameraZ = CONFIG.tunnelLength; // START at the end (far away, seeing GLB)
+    const maxCameraZ = CONFIG.tunnelLength; // Stop at the end
+
+    // ===== MAC OS WINDOWS (HTML OVERLAY) =====
+    const windowsContainer = document.getElementById('windows-container');
+    const windowElements = [];
+    const markerPlanes = [];
+
+    function createWindows() {
+      uploads.forEach((upload, index) => {
+        // Position markers along the path - starting from the far end
+        const zPosition = CONFIG.tunnelLength - (index * CONFIG.noteSpacing + 20); // Start from far end (180)
+
+        // Position notes in different screen zones for 2D HTML rendering
+        const screenPositions = [
+          { left: '10%', top: '50%', zone: 'left' },
+          { left: '75%', top: '50%', zone: 'right' },
+          { left: '15%', top: '15%', zone: 'top-left' },
+          { left: '70%', top: '20%', zone: 'top-right' },
+          { left: '45%', top: '10%', zone: 'top-center' },
+        ];
+
+        const screenPos = screenPositions[index % screenPositions.length];
+
+        // Create HTML window element instead of 3D geometry
+        const windowEl = document.createElement('div');
+        windowEl.className = 'upload-window';
+        windowEl.style.left = screenPos.left;
+        windowEl.style.top = screenPos.top;
+        windowEl.style.width = '280px'; // Smaller: reduced from 320px to 280px
+        windowEl.style.display = 'none'; // Hidden by default
+        windowEl.dataset.zPosition = zPosition;
+        windowEl.dataset.index = index;
+
+        // Create Mac window header
+        const header = document.createElement('div');
+        header.className = 'window-header';
+        header.innerHTML = `
+          <span class="window-dot red"></span>
+          <span class="window-dot yellow"></span>
+          <span class="window-dot green"></span>
+          <span class="window-title">${upload.type === 'image' ? 'Image.jpg' : 'Note.txt'}</span>
+        `;
+
+        // Create window body
+        const body = document.createElement('div');
+        body.className = 'window-body';
+
+        if (upload.type === 'text') {
+          const textDiv = document.createElement('div');
+          textDiv.className = 'window-text';
+          textDiv.textContent = upload.content;
+          body.appendChild(textDiv);
+        } else if (upload.type === 'image') {
+          const img = document.createElement('img');
+          img.className = 'window-image';
+          img.src = upload.content;
+          img.alt = upload.caption || 'Upload';
+          body.appendChild(img);
+        }
+
+        // Create meta info
+        const meta = document.createElement('div');
+        meta.className = 'window-meta';
+        const authorName = upload.name || upload.author || 'Anonymous';
+        const location = upload.city || upload.location || 'Unknown';
+        meta.textContent = `${authorName} • ${location}`;
+        body.appendChild(meta);
+
+        // Assemble window
+        windowEl.appendChild(header);
+        windowEl.appendChild(body);
+
+        // Click handler to open overlay
+        windowEl.addEventListener('click', () => {
+          openNoteOverlay(upload);
+        });
+
+        // Add to container
+        windowsContainer.appendChild(windowEl);
+        windowElements.push({ element: windowEl, zPosition: zPosition });
+      });
+
+      console.log('[Quiet] Created', windowElements.length, '2D HTML upload windows');
+    }
+
+    // Update window visibility based on camera position
+    function updateWindowVisibility() {
+      windowElements.forEach(({ element, zPosition }) => {
+        // Show windows when camera is within range of their Z position
+        const distance = Math.abs(cameraZ - zPosition);
+        const visibilityRange = 50; // Increased to 50 to show multiple notes at once
+
+        if (distance < visibilityRange) {
+          element.style.display = 'block';
+          element.style.opacity = '1'; // Always fully opaque, no fading
+        } else {
+          element.style.display = 'none';
+        }
+      });
+    }
+
+    function openNoteOverlay(upload) {
+      noteBody.innerHTML = '';
+
+      if (upload.type === 'image') {
+        const img = document.createElement('img');
+        img.src = upload.content;
+        img.className = 'note-image';
+        noteBody.appendChild(img);
+
+        // Add caption if it exists
+        if (upload.caption) {
+          const caption = document.createElement('div');
+          caption.className = 'note-text';
+          caption.style.marginTop = '16px';
+          caption.style.fontStyle = 'italic';
+          caption.textContent = upload.caption;
+          noteBody.appendChild(caption);
+        }
+      } else {
+        const text = document.createElement('div');
+        text.className = 'note-text';
+        text.textContent = upload.content;
+        noteBody.appendChild(text);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'note-meta';
+      const authorName = upload.name || upload.author || 'Anonymous';
+      const location = upload.city || upload.location || 'Unknown';
+      meta.innerHTML = `
+        <span>From: ${authorName}</span>
+        <span>Location: ${location}</span>
+      `;
+      noteBody.appendChild(meta);
+
+      noteOverlay.classList.add('visible');
+    }
+
+    function closeNoteOverlay() {
+      noteOverlay.classList.remove('visible');
+    }
+
+    noteClose.addEventListener('click', closeNoteOverlay);
+    noteOverlay.addEventListener('click', (e) => {
+      if (e.target === noteOverlay) {
+        closeNoteOverlay();
+      }
+    });
+
+    // ===== SCROLL CONTROL =====
+    function onScroll(event) {
+      const delta = event.deltaY || event.detail || event.wheelDelta;
+      const scrollAmount = delta > 0 ? CONFIG.scrollSpeed : -CONFIG.scrollSpeed; // Normal direction now
+
+      // Move camera forward through the tunnel (starting from far, moving toward beginning)
+      cameraZ += scrollAmount;
+
+      // Clamp camera position (start at maxCameraZ, move toward cameraStartZ)
+      cameraZ = Math.max(CONFIG.cameraStartZ, Math.min(maxCameraZ, cameraZ));
+
+      // Update slider to match camera position
+      const sliderValue = ((cameraZ - CONFIG.cameraStartZ) / (maxCameraZ - CONFIG.cameraStartZ)) * 100;
+      walkSlider.value = sliderValue;
+
+      // Update progress indicator (starting from end)
+      const progress = (maxCameraZ - cameraZ) / (maxCameraZ - CONFIG.cameraStartZ);
+      const currentNote = Math.max(0, Math.floor(progress * uploads.length));
+      progressIndicator.textContent = `${currentNote} / ${uploads.length}`;
+    }
+
+    // ===== SLIDER CONTROL =====
+    walkSlider.addEventListener('input', (e) => {
+      const sliderPercent = parseFloat(e.target.value) / 100;
+      // Map slider (0-100%) to camera position (start to end of tunnel)
+      cameraZ = CONFIG.cameraStartZ + (sliderPercent * (maxCameraZ - CONFIG.cameraStartZ));
+
+      // Update progress indicator (starting from end)
+      const progress = (maxCameraZ - cameraZ) / (maxCameraZ - CONFIG.cameraStartZ);
+      const currentNote = Math.max(0, Math.floor(progress * uploads.length));
+      progressIndicator.textContent = `${currentNote} / ${uploads.length}`;
+    });
+
+    // ===== LOAD TUNNEL GLB =====
+    const gltfLoader = new GLTFLoader();
+    let tunnelModel = null;
+
+    gltfLoader.load(
+      'Website scene .glb',
+      (gltf) => {
+        console.log('[Quiet] ✓ Gallery GLB loaded successfully');
+
+        // Create multiple instances of the GLB along the tunnel
+        const sceneSpacing = 50; // Space between each scene copy (increased from 30)
+        const numberOfScenes = 9; // Number of times to repeat the scene (increased from 4 to 9)
+
+        for (let i = 0; i < numberOfScenes; i++) {
+          // Clone the scene for each instance
+          const tunnelClone = gltf.scene.clone();
+
+          // Position each GLB scene along the Z axis - start far away
+          tunnelClone.scale.set(1.5, 1.5, 1.5);
+          const zPosition = 40 + (i * sceneSpacing); // Start at 40 (further away), then repeat every 50 units
+          tunnelClone.position.set(0, 0, zPosition); // X=0 for perfect center
+
+          // Rotation - face the camera directly (front facing like Polycam)
+          tunnelClone.rotation.x = 0;
+          tunnelClone.rotation.y = Math.PI / 2; // +90 degrees
+          tunnelClone.rotation.z = 0;
+
+          // Apply materials to all meshes for proper 3D rendering
+          tunnelClone.traverse((child) => {
+            if (child.isMesh) {
+              // Ensure materials are set up for 3D rendering
+              if (child.material) {
+                child.material.side = THREE.DoubleSide;
+                child.material.roughness = 0.8;
+                child.material.metalness = 0.2;
+                child.material.flatShading = false;
+                child.receiveShadow = true;
+                child.castShadow = true;
+              }
+            }
+          });
+
+          scene.add(tunnelClone);
+          console.log(`[Quiet] Gallery ${i + 1} added to scene at Z position:`, zPosition);
+        }
+
+        // Create Mac OS windows after tunnel loads
+        createWindows();
+
+        // Hide loading screen
+        loadingScreen.classList.add('hidden');
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      },
+      (xhr) => {
+        const percentComplete = xhr.total > 0 ? (xhr.loaded / xhr.total * 100).toFixed(0) : 0;
+        loadingFill.style.width = percentComplete + '%';
+        console.log('[Quiet] Loading gallery:', percentComplete + '%');
+      },
+      (error) => {
+        console.error('[Quiet] ✗ Error loading gallery GLB:', error);
+        loadingScreen.querySelector('.loading-text').textContent = 'Error loading gallery';
+      }
+    );
+
+    // ===== ANIMATION LOOP =====
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Update camera position smoothly
+      camera.position.z = cameraZ;
+
+      // Keep camera facing forward to see centered GLB
+      camera.rotation.y = 0; // Face forward
+
+      // Update 2D HTML window visibility based on camera position
+      updateWindowVisibility();
+
+      renderer.render(scene, camera);
+    }
+
+    // ===== EVENT LISTENERS =====
+    // No raycasting needed - HTML windows have native click handlers
+    window.addEventListener('wheel', onScroll, { passive: true });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ===== START =====
+    console.log('[Quiet] Starting animation loop');
+    animate();
+
+  </script>
+</body>
+</html>

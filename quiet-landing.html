@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiet Archive - Weekly Wonder</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Quiet Uploads Landing Page Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      background: #ffffff;
+      color: #000;
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    .quiet-container {
+      max-width: 1400px;
+      min-height: 100vh;
+      padding: 20px 40px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Title at top */
+    .quiet-title {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-align: center;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      font-stretch: ultra-expanded;
+    }
+
+    /* Main layout - two columns */
+    .quiet-layout {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 40px;
+      align-items: start;
+      flex: 1;
+      overflow: visible;
+    }
+
+    /* Left column */
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+    }
+
+    /* Right column - character */
+    .right-column {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      height: 100%;
+    }
+
+    /* Mac OS Browser Window */
+    .mac-browser-window {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .mac-browser-header {
+      background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+      padding: 12px 16px;
+      border-bottom: 1px solid #b0b0b0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mac-browser-header .traffic-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .traffic-light.red { background: #ff5f56; border: 1px solid #e0443e; }
+    .traffic-light.yellow { background: #ffbd2e; border: 1px solid #dfa123; }
+    .traffic-light.green { background: #27c93f; border: 1px solid #1aab2e; }
+
+    .mac-browser-url {
+      margin-left: 16px;
+      flex: 1;
+      background: #fff;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 11px;
+      color: #666;
+      border: 1px solid #d0d0d0;
+    }
+
+    .mac-browser-body {
+      padding: 24px 20px;
+      min-height: 150px;
+      background: #fff;
+    }
+
+    /* Upload window with scrolling */
+    .mac-browser-window:last-child .mac-browser-body {
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+
+    /* Transcript text with typewriter */
+    .transcript-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #000;
+      white-space: pre-line;
+    }
+
+    .transcript-text::after {
+      content: '|';
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Position transcript window on top of video */
+    .transcript-window-overlay {
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      z-index: 5;
+      max-width: 320px;
+    }
+
+    .transcript-window-overlay .mac-browser-body {
+      padding: 14px 16px;
+      min-height: auto;
+    }
+
+    .transcript-window-overlay .mac-browser-header {
+      padding: 8px 12px;
+    }
+
+    .transcript-window-overlay .traffic-light {
+      width: 10px;
+      height: 10px;
+    }
+
+    .transcript-window-overlay .mac-browser-url {
+      font-size: 10px;
+      padding: 3px 10px;
+    }
+
+    /* Character video - positioned with overlay button */
+    .character-video-container {
+      width: 100%;
+      min-height: 600px;
+      position: relative;
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #characterVideo {
+      width: 110%;
+      max-height: 550px;
+      height: auto;
+      display: block;
+      border-radius: 0;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+      border: none;
+    }
+
+    /* Volume control button */
+    .volume-control {
+      position: absolute;
+      bottom: 80px;
+      right: 30px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+    }
+
+    .volume-control:hover {
+      background: rgba(0, 0, 0, 0.9);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: scale(1.1);
+    }
+
+    .volume-icon {
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .volume-control.muted .volume-icon::before {
+      content: '🔇';
+    }
+
+    .volume-control:not(.muted) .volume-icon::before {
+      content: '🔊';
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed #999;
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #fafafa;
+    }
+
+    .upload-zone:hover {
+      border-color: #000;
+      background: #f0f0f0;
+    }
+
+    .upload-zone.dragging {
+      border-color: #000;
+      background: #e8e8e8;
+    }
+
+    .upload-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .upload-zone p {
+      margin: 8px 0;
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .upload-zone small {
+      color: #666;
+      font-size: 12px;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    /* Upload Form Styles */
+    .upload-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      text-align: left;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #000;
+      background: #fff;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #000;
+    }
+
+    .char-counter {
+      font-size: 11px;
+      color: #666;
+      text-align: right;
+      margin-top: -2px;
+    }
+
+    .char-counter.warning {
+      color: #ff5f56;
+      font-weight: 600;
+    }
+
+    .form-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .form-tab {
+      flex: 1;
+      padding: 10px 16px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .form-tab.active {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .form-tab:hover:not(.active) {
+      background: #e0e0e0;
+    }
+
+    .form-content {
+      display: none;
+    }
+
+    .form-content.active {
+      display: block;
+    }
+
+    .submit-btn {
+      padding: 12px 24px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .submit-btn:hover {
+      background: #333;
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Enter Button - overlaid on video */
+    .enter-section {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+    }
+
+    .enter-btn {
+      padding: 14px 40px;
+      background: rgba(0, 0, 0, 0.9);
+      color: #fff;
+      border: 2px solid #fff;
+      border-radius: 30px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+    }
+
+    .enter-btn:hover {
+      background: rgba(255, 255, 255, 0.95);
+      color: #000;
+      border-color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .enter-hint {
+      margin-top: 8px;
+      font-size: 10px;
+      color: #000;
+      text-shadow: none;
+      font-family: 'Fira Code', ui-monospace, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Uploaded Preview */
+    .upload-preview {
+      margin-top: 16px;
+      padding: 16px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .preview-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .preview-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .quiet-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .right-column {
+        align-items: flex-start;
+      }
+
+      .character-video-container {
+        max-width: 100%;
+      }
+
+      .enter-section {
+        bottom: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .quiet-container {
+        padding: 24px 16px;
+      }
+
+      .quiet-title {
+        font-size: 32px;
+        margin-bottom: 40px;
+        letter-spacing: 2px;
+      }
+
+      .mac-browser-body {
+        padding: 24px 20px;
+      }
+
+      .upload-zone {
+        padding: 32px 20px;
+      }
+
+      .enter-btn {
+        padding: 12px 32px;
+        font-size: 12px;
+        letter-spacing: 1px;
+      }
+
+      .enter-section {
+        bottom: 20px;
+      }
+
+      .enter-hint {
+        font-size: 9px;
+      }
+
+      .transcript-window-overlay {
+        top: 20px;
+        left: 20px;
+        max-width: 280px;
+      }
+
+      .transcript-window-overlay .transcript-text {
+        font-size: 11px;
+      }
+
+      #characterVideo {
+        width: 100%;
+        max-height: 450px;
+      }
+
+      .volume-control {
+        bottom: 70px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+      }
+
+      .volume-icon {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="quiet-container">
+    <!-- Title at top -->
+    <h1 class="quiet-title">QUIET ARCHIVE</h1>
+
+    <!-- Two column layout -->
+    <div class="quiet-layout">
+      <!-- Left Column: Upload Only -->
+      <div class="left-column">
+        <!-- Upload Zone Mac Window -->
+        <div class="mac-browser-window">
+          <div class="mac-browser-header">
+            <span class="traffic-light red"></span>
+            <span class="traffic-light yellow"></span>
+            <span class="traffic-light green"></span>
+            <div class="mac-browser-url">www.weeklywonder.org</div>
+          </div>
+          <div class="mac-browser-body">
+            <!-- Form Tabs -->
+            <div class="form-tabs">
+              <div class="form-tab active" data-tab="image">Upload Image</div>
+              <div class="form-tab" data-tab="text">Write Text</div>
+            </div>
+
+            <!-- Image Upload Form -->
+            <div class="form-content active" id="imageForm">
+              <div class="upload-form">
+                <div class="upload-zone" id="imageUploadZone">
+                  <div class="upload-icon">📷</div>
+                  <p><strong>Click or drag to upload an image</strong></p>
+                  <small>JPG, PNG, GIF</small>
+                  <input type="file" id="imageInput" accept="image/*">
+                </div>
+
+                <!-- Image Preview -->
+                <div id="imagePreview" style="display: none;">
+                  <img id="previewImg" class="preview-image" style="max-width: 100%; max-height: 300px; border-radius: 4px; margin-bottom: 12px;">
+                </div>
+
+                <div class="form-group">
+                  <label for="imageName">Name</label>
+                  <input type="text" id="imageName" placeholder="e.g. Daniella, Christopher or a human" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                  <label for="imageCity">City/Location</label>
+                  <input type="text" id="imageCity" placeholder="e.g. Canada or lost" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                  <label for="imageCaption">Caption (250 characters max)</label>
+                  <textarea id="imageCaption" rows="3" maxlength="250" placeholder="e.g. I saw this beautiful tree on my walk"></textarea>
+                  <div class="char-counter" id="imageCaptionCounter">250 characters remaining</div>
+                </div>
+
+                <button class="submit-btn" id="imageSubmitBtn" disabled>Submit Image</button>
+              </div>
+            </div>
+
+            <!-- Text Upload Form -->
+            <div class="form-content" id="textForm">
+              <div class="upload-form">
+                <div class="form-group">
+                  <label for="textContent">Your Text (250 characters max)</label>
+                  <textarea id="textContent" rows="5" maxlength="250" placeholder="Write something..."></textarea>
+                  <div class="char-counter" id="textContentCounter">250 characters remaining</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="textName">Name</label>
+                  <input type="text" id="textName" placeholder="e.g. Daniella, Christopher or a human" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                  <label for="textCity">City/Location</label>
+                  <input type="text" id="textCity" placeholder="e.g. Canada or lost" maxlength="100">
+                </div>
+
+                <button class="submit-btn" id="textSubmitBtn" disabled>Submit Text</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Character Video + Transcript + Enter Button -->
+      <div class="right-column">
+        <!-- Character Video -->
+        <div class="character-video-container">
+          <video id="characterVideo" autoplay loop muted playsinline>
+            <source src="images/goodcopytokoyo.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+
+          <!-- Transcript Mac Browser Window - overlaid on video -->
+          <div class="mac-browser-window transcript-window-overlay">
+            <div class="mac-browser-header">
+              <span class="traffic-light red"></span>
+              <span class="traffic-light yellow"></span>
+              <span class="traffic-light green"></span>
+              <div class="mac-browser-url">www.weeklywonder.org</div>
+            </div>
+            <div class="mac-browser-body">
+              <div class="transcript-text" id="transcriptText"></div>
+            </div>
+          </div>
+
+          <!-- Volume Control Button -->
+          <div class="volume-control muted" id="volumeControl">
+            <div class="volume-icon"></div>
+          </div>
+
+          <!-- Enter Gallery Button - layered on top of video -->
+          <div class="enter-section">
+            <button class="enter-btn" id="enterBtn">Enter</button>
+            <p class="enter-hint">Press Enter or click to explore the 3D gallery</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Typewriter effect for transcript
+    const transcriptElement = document.getElementById('transcriptText');
+    const transcriptFullText = `Quiet archive
+Everything here was left by someone not for attention. Just to exist if you want you can leave something here too or you can keep walking`;
+
+    let transcriptIndex = 0;
+    let isTypingComplete = false;
+
+    function typewriter() {
+      if (transcriptIndex < transcriptFullText.length) {
+        transcriptElement.textContent = transcriptFullText.substring(0, transcriptIndex + 1);
+        transcriptIndex++;
+        setTimeout(typewriter, 50); // 50ms delay between characters
+      } else {
+        isTypingComplete = true;
+        // Remove blinking cursor after typing completes
+        transcriptElement.style.setProperty('--cursor-display', 'none');
+      }
+    }
+
+    // Start typewriter on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(typewriter, 500); // Start after 500ms delay
+    });
+
+    // Character Video - volume control
+    const characterVideo = document.getElementById('characterVideo');
+    const volumeControl = document.getElementById('volumeControl');
+    let isMuted = true;
+
+    // Volume button click handler
+    volumeControl.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent triggering other click events
+
+      isMuted = !isMuted;
+      characterVideo.muted = isMuted;
+
+      if (isMuted) {
+        volumeControl.classList.add('muted');
+      } else {
+        volumeControl.classList.remove('muted');
+        characterVideo.play(); // Ensure video is playing when unmuted
+      }
+
+      console.log('[Quiet Landing] Audio ' + (isMuted ? 'muted' : 'unmuted'));
+    });
+
+    // Form Tab Switching
+    const formTabs = document.querySelectorAll('.form-tab');
+    const imageForm = document.getElementById('imageForm');
+    const textForm = document.getElementById('textForm');
+
+    formTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabType = tab.getAttribute('data-tab');
+
+        // Update active tab
+        formTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Show/hide forms
+        if (tabType === 'image') {
+          imageForm.classList.add('active');
+          textForm.classList.remove('active');
+        } else {
+          textForm.classList.add('active');
+          imageForm.classList.remove('active');
+        }
+      });
+    });
+
+    // DEBUG: Log localStorage on page load
+    console.log('[Quiet Landing] Current uploads:', localStorage.getItem('quietUploads'));
+
+    // Image Upload Functionality
+    const imageUploadZone = document.getElementById('imageUploadZone');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const imageName = document.getElementById('imageName');
+    const imageCity = document.getElementById('imageCity');
+    const imageCaption = document.getElementById('imageCaption');
+    const imageCaptionCounter = document.getElementById('imageCaptionCounter');
+    const imageSubmitBtn = document.getElementById('imageSubmitBtn');
+
+    let uploadedImageFile = null;
+
+    // Click to upload image
+    imageUploadZone.addEventListener('click', () => {
+      imageInput.click();
+    });
+
+    // Drag and drop for images
+    imageUploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageUploadZone.classList.add('dragging');
+    });
+
+    imageUploadZone.addEventListener('dragleave', () => {
+      imageUploadZone.classList.remove('dragging');
+    });
+
+    imageUploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageUploadZone.classList.remove('dragging');
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        handleImageUpload(files[0]);
+      }
+    });
+
+    // Image input change
+    imageInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleImageUpload(e.target.files[0]);
+      }
+    });
+
+    // Handle image upload
+    function handleImageUpload(file) {
+      uploadedImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        imagePreview.style.display = 'block';
+        validateImageForm();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Character counter for image caption
+    imageCaption.addEventListener('input', () => {
+      const remaining = 250 - imageCaption.value.length;
+      imageCaptionCounter.textContent = `${remaining} characters remaining`;
+      if (remaining < 30) {
+        imageCaptionCounter.classList.add('warning');
+      } else {
+        imageCaptionCounter.classList.remove('warning');
+      }
+      validateImageForm();
+    });
+
+    // Validate image form
+    function validateImageForm() {
+      const hasImage = uploadedImageFile !== null;
+      const hasName = imageName.value.trim().length > 0;
+      const hasCity = imageCity.value.trim().length > 0;
+      const hasCaption = imageCaption.value.trim().length > 0;
+
+      imageSubmitBtn.disabled = !(hasImage && hasName && hasCity && hasCaption);
+    }
+
+    imageName.addEventListener('input', validateImageForm);
+    imageCity.addEventListener('input', validateImageForm);
+
+    // Image form submission
+    imageSubmitBtn.addEventListener('click', () => {
+      if (uploadedImageFile) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const upload = {
+            type: 'image',
+            content: e.target.result,
+            name: imageName.value.trim(),
+            city: imageCity.value.trim(),
+            caption: imageCaption.value.trim(),
+            timestamp: Date.now()
+          };
+
+          // Store in localStorage
+          let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
+          uploads.push(upload);
+          localStorage.setItem('quietUploads', JSON.stringify(uploads));
+
+          console.log('[Quiet Landing] ✓ Image upload saved:', upload);
+          console.log('[Quiet Landing] Total uploads now:', uploads.length);
+          alert('Image uploaded successfully! Check the console (F12) to verify.');
+
+          // Reset form
+          imageInput.value = '';
+          imageName.value = '';
+          imageCity.value = '';
+          imageCaption.value = '';
+          imagePreview.style.display = 'none';
+          uploadedImageFile = null;
+          imageCaptionCounter.textContent = '250 characters remaining';
+          imageCaptionCounter.classList.remove('warning');
+          validateImageForm();
+        };
+        reader.readAsDataURL(uploadedImageFile);
+      }
+    });
+
+    // Text Form Functionality
+    const textContent = document.getElementById('textContent');
+    const textContentCounter = document.getElementById('textContentCounter');
+    const textName = document.getElementById('textName');
+    const textCity = document.getElementById('textCity');
+    const textSubmitBtn = document.getElementById('textSubmitBtn');
+
+    // Character counter for text content
+    textContent.addEventListener('input', () => {
+      const remaining = 250 - textContent.value.length;
+      textContentCounter.textContent = `${remaining} characters remaining`;
+      if (remaining < 30) {
+        textContentCounter.classList.add('warning');
+      } else {
+        textContentCounter.classList.remove('warning');
+      }
+      validateTextForm();
+    });
+
+    // Validate text form
+    function validateTextForm() {
+      const hasText = textContent.value.trim().length > 0;
+      const hasName = textName.value.trim().length > 0;
+      const hasCity = textCity.value.trim().length > 0;
+
+      textSubmitBtn.disabled = !(hasText && hasName && hasCity);
+    }
+
+    textName.addEventListener('input', validateTextForm);
+    textCity.addEventListener('input', validateTextForm);
+
+    // Text form submission
+    textSubmitBtn.addEventListener('click', () => {
+      const upload = {
+        type: 'text',
+        content: textContent.value.trim(),
+        name: textName.value.trim(),
+        city: textCity.value.trim(),
+        timestamp: Date.now()
+      };
+
+      // Store in localStorage
+      let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
+      uploads.push(upload);
+      localStorage.setItem('quietUploads', JSON.stringify(uploads));
+
+      console.log('[Quiet Landing] ✓ Text upload saved:', upload);
+      console.log('[Quiet Landing] Total uploads now:', uploads.length);
+      alert('Text uploaded successfully! Check the console (F12) to verify.');
+
+      // Reset form
+      textContent.value = '';
+      textName.value = '';
+      textCity.value = '';
+      textContentCounter.textContent = '250 characters remaining';
+      textContentCounter.classList.remove('warning');
+      validateTextForm();
+    });
+
+    // Enter Gallery - Navigate to 3D tunnel
+    const enterBtn = document.getElementById('enterBtn');
+    enterBtn.addEventListener('click', () => {
+      window.location.href = 'quiet.html';
+    });
+
+    // Enter key to navigate
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.repeat) {
+        // Don't trigger if user is typing in a form field
+        if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+          window.location.href = 'quiet.html';
+        }
+      }
+    });
+
+    console.log('[Quiet Landing] Initialized');
+  </script>
+</body>
+</html>
