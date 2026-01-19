@@ -16,7 +16,7 @@
       background: #ffffff;
       color: #000;
       overflow-x: hidden;
-      overflow-y: hidden;
+      overflow-y: auto; /* Allow scrolling on mobile */
     }
 
     .quiet-container {
@@ -476,21 +476,64 @@
 
     @media (max-width: 768px) {
       .quiet-container {
-        padding: 24px 16px;
+        padding: 16px 12px;
+        overflow-y: auto; /* Allow vertical scrolling on mobile */
+        height: auto; /* Remove fixed height */
       }
 
       .quiet-title {
-        font-size: 32px;
-        margin-bottom: 40px;
+        font-size: 24px;
+        margin-bottom: 20px;
         letter-spacing: 2px;
       }
 
+      .quiet-layout {
+        gap: 20px;
+      }
+
+      .left-column {
+        order: 2; /* Move form below video on mobile */
+      }
+
+      .right-column {
+        order: 1; /* Show video first on mobile */
+      }
+
       .mac-browser-body {
-        padding: 24px 20px;
+        padding: 16px 12px;
+        max-height: none; /* Remove height restriction */
       }
 
       .upload-zone {
-        padding: 32px 20px;
+        padding: 24px 16px;
+      }
+
+      .character-video-container {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      #characterVideo {
+        width: 100%;
+        max-height: 300px; /* Smaller video on mobile */
+        height: auto;
+      }
+
+      .transcript-window-overlay {
+        position: relative; /* Change from absolute to relative on mobile */
+        top: 0;
+        left: 0;
+        max-width: 100%;
+        margin-top: 12px; /* Space below video */
+      }
+
+      .transcript-window-overlay .mac-browser-body {
+        padding: 12px;
+      }
+
+      .transcript-window-overlay .transcript-text {
+        font-size: 11px;
+        line-height: 1.4;
       }
 
       .enter-btn {
@@ -500,37 +543,43 @@
       }
 
       .enter-section {
-        bottom: 20px;
+        position: relative; /* Change from absolute to relative */
+        bottom: auto;
+        margin-top: 16px;
+        text-align: center;
       }
 
       .enter-hint {
         font-size: 9px;
       }
 
-      .transcript-window-overlay {
-        top: 20px;
-        left: 20px;
-        max-width: 280px;
-      }
-
-      .transcript-window-overlay .transcript-text {
-        font-size: 11px;
-      }
-
-      #characterVideo {
-        width: 100%;
-        max-height: 450px;
-      }
-
       .volume-control {
-        bottom: 70px;
-        right: 20px;
-        width: 40px;
-        height: 40px;
+        bottom: 60px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
       }
 
       .volume-icon {
-        font-size: 16px;
+        font-size: 14px;
+      }
+
+      .form-group label {
+        font-size: 11px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        font-size: 12px;
+      }
+
+      .char-counter {
+        font-size: 10px;
+      }
+
+      .submit-btn {
+        font-size: 12px;
+        padding: 10px 20px;
       }
     }
   </style>
