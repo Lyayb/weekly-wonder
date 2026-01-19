@@ -481,7 +481,15 @@
 
   <!-- Progress indicator -->
   <div class="progress-indicator" id="progressIndicator">
-    8 / 8
+    0 / 0
+  </div>
+
+  <!-- Debug info (visible on screen) -->
+  <div id="debugInfo" style="position: fixed; top: 80px; left: 20px; background: rgba(0,0,0,0.8); color: #0f0; padding: 10px; font-family: monospace; font-size: 11px; z-index: 200; border-radius: 4px;">
+    <div>Uploads: <span id="debugUploads">0</span></div>
+    <div>Camera Z: <span id="debugCameraZ">0</span></div>
+    <div>Visible: <span id="debugVisible">0</span></div>
+    <div>Windows created: <span id="debugWindows">0</span></div>
   </div>
 
   <!-- Note overlay -->
@@ -522,6 +530,9 @@
     // Debug: Check if we're on mobile
     const isMobile = window.innerWidth <= 768;
     console.log('[Quiet] Device type:', isMobile ? 'Mobile' : 'Desktop');
+
+    // Update on-screen debug info
+    document.getElementById('debugUploads').textContent = uploads.length;
 
     // No default examples - only show real user uploads
     /*
@@ -729,6 +740,9 @@
 
       console.log('[Quiet] Created', windowElements.length, '2D HTML upload windows');
       console.log('[Quiet] Window elements:', windowElements);
+
+      // Update debug info
+      document.getElementById('debugWindows').textContent = windowElements.length;
     }
 
     // Update window visibility based on camera position
@@ -748,6 +762,10 @@
           element.style.display = 'none';
         }
       });
+
+      // Update on-screen debug every frame
+      document.getElementById('debugCameraZ').textContent = Math.round(cameraZ);
+      document.getElementById('debugVisible').textContent = visibleCount;
 
       // Log visibility every 60 frames (about once per second)
       if (visibilityLogCount % 60 === 0) {
