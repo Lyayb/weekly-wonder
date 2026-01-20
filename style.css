@@ -276,6 +276,11 @@ body{
   padding-bottom: 8px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  /* Prevent week swipe from interfering with card scroll */
+  overscroll-behavior-x: contain;
+  /* Ensure cards scroll smoothly */
+  touch-action: pan-x;
 }
 
 .week-grid::-webkit-scrollbar {
@@ -345,6 +350,7 @@ body{
   background: #fff;
   border-radius: 4px;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .card:hover {

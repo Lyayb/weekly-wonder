@@ -236,24 +236,63 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Touch/swipe support
+      // Touch/swipe support - only on week labels and container (not cards)
       let touchStartX = 0;
       let touchEndX = 0;
+      let touchStartY = 0;
+      let touchEndY = 0;
+      let isSwipeGesture = false;
 
-      weeksContainer.addEventListener("touchstart", (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-      });
+      // Add swipe detection to week labels and container, but NOT the grid
+      function addSwipeListeners(element) {
+        element.addEventListener("touchstart", (e) => {
+          // Don't interfere if touching the scrollable grid
+          if (e.target.closest('.week-grid')) {
+            return;
+          }
 
-      weeksContainer.addEventListener("touchend", (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-      });
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+          isSwipeGesture = true;
+        });
+
+        element.addEventListener("touchmove", (e) => {
+          if (!isSwipeGesture || e.target.closest('.week-grid')) {
+            return;
+          }
+
+          // Check if this is more horizontal than vertical
+          const currentX = e.changedTouches[0].screenX;
+          const currentY = e.changedTouches[0].screenY;
+          const diffX = Math.abs(currentX - touchStartX);
+          const diffY = Math.abs(currentY - touchStartY);
+
+          // If moving more vertically, cancel the swipe
+          if (diffY > diffX) {
+            isSwipeGesture = false;
+          }
+        });
+
+        element.addEventListener("touchend", (e) => {
+          if (!isSwipeGesture || e.target.closest('.week-grid')) {
+            isSwipeGesture = false;
+            return;
+          }
+
+          touchEndX = e.changedTouches[0].screenX;
+          touchEndY = e.changedTouches[0].screenY;
+          handleSwipe();
+          isSwipeGesture = false;
+        });
+      }
 
       function handleSwipe() {
-        const swipeThreshold = 50;
+        const swipeThreshold = 100; // Increased threshold for more deliberate swipes
         const diff = touchStartX - touchEndX;
+        const verticalDiff = Math.abs(touchStartY - touchEndY);
 
-        if (Math.abs(diff) > swipeThreshold) {
+        // Only trigger if horizontal swipe is dominant
+        if (Math.abs(diff) > swipeThreshold && verticalDiff < 50) {
           if (diff > 0) {
             // Swiped left - show next week
             if (currentWeekIndex < totalWeeks - 1) {
@@ -267,6 +306,12 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       }
+
+      // Apply swipe listeners to week labels only
+      weeksContainer.querySelectorAll('.week-label').forEach(addSwipeListeners);
+
+      // Also add to the container background areas (but grid will be excluded)
+      addSwipeListeners(weeksContainer);
 
       // Show the most recent week (index 0) by default
       showWeek(0);
