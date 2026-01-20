@@ -506,7 +506,7 @@
 
     // ===== CONFIGURATION =====
     const CONFIG = {
-      tunnelLength: 450,       // Total tunnel length (increased from 200 to 450 for 9 scenes)
+      tunnelLength: 1200,      // Total tunnel length (increased to 1200 for 24 scenes)
       cameraStartZ: -5,        // Starting position (slightly back to see GLB from start)
       cameraHeight: 1.6,       // Eye level height
       cameraX: 0,              // Camera stays centered
@@ -514,7 +514,7 @@
       noteSpacing: 60,         // Space between notes (increased to prevent overlap)
       noteScale: 2,            // Size of note planes
       fogNear: 1,
-      fogFar: 450              // Increased fog distance to see all GLB scenes
+      fogFar: 1200             // Increased fog distance to see all GLB scenes
     };
 
     // ===== UPLOAD DATA =====
@@ -909,8 +909,8 @@
         console.log('[Quiet] ✓ Gallery GLB loaded successfully');
 
         // Create multiple instances of the GLB along the tunnel
-        const sceneSpacing = 50; // Space between each scene copy (increased from 30)
-        const numberOfScenes = 9; // Number of times to repeat the scene (increased from 4 to 9)
+        const sceneSpacing = 50; // Space between each scene copy
+        const numberOfScenes = 24; // Number of times to repeat the scene (24 scenes total)
 
         for (let i = 0; i < numberOfScenes; i++) {
           // Clone the scene for each instance
