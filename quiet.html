@@ -510,7 +510,7 @@
       cameraHeight: 1.6,       // Eye level height
       cameraX: 0,              // Camera stays centered
       scrollSpeed: 0.25,       // How fast we move per scroll
-      noteSpacing: 10,         // Space between notes
+      noteSpacing: 60,         // Space between notes (increased to prevent overlap)
       noteScale: 2,            // Size of note planes
       fogNear: 1,
       fogFar: 450              // Increased fog distance to see all GLB scenes
@@ -773,7 +773,7 @@
       windowElements.forEach(({ element, zPosition }, index) => {
         // Show windows when camera is within range of their Z position
         const distance = Math.abs(cameraZ - zPosition);
-        const visibilityRange = 50; // Increased to 50 to show multiple notes at once
+        const visibilityRange = 40; // Show one note at a time to prevent overlap
 
         if (distance < visibilityRange) {
           element.style.display = 'block';
