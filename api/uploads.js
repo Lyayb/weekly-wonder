@@ -1,8 +1,27 @@
 // Vercel serverless function to manage uploads
-// Uses simple in-memory storage (resets on deployment)
-// For persistent storage, you'd need Vercel KV or a database
+// Uses Redis for persistent storage across deployments
 
-let uploadsCache = [];
+import { createClient } from 'redis';
+
+// Redis client instance
+let redisClient = null;
+
+// Get Redis client (lazy initialization)
+async function getRedisClient() {
+  if (!redisClient) {
+    redisClient = createClient({
+      url: process.env.REDIS_URL
+    });
+
+    redisClient.on('error', (err) => console.error('[Redis] Client Error:', err));
+
+    await redisClient.connect();
+    console.log('[Redis] Connected');
+  }
+  return redisClient;
+}
+
+const UPLOADS_KEY = 'quiet-archive:uploads';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -18,9 +37,16 @@ export default async function handler(req, res) {
   }
 
   try {
+    const redis = await getRedisClient();
+
     if (req.method === 'GET') {
-      // Get all uploads
-      res.status(200).json({ uploads: uploadsCache });
+      // Get all uploads from Redis
+      const uploadsJson = await redis.get(UPLOADS_KEY);
+      const uploads = uploadsJson ? JSON.parse(uploadsJson) : [];
+
+      console.log('[API] Retrieved', uploads.length, 'uploads from Redis');
+      res.status(200).json({ uploads });
+
     } else if (req.method === 'POST') {
       // Add new upload
       const upload = req.body;
@@ -35,17 +61,24 @@ export default async function handler(req, res) {
         upload.timestamp = Date.now();
       }
 
+      // Get existing uploads
+      const uploadsJson = await redis.get(UPLOADS_KEY);
+      let uploads = uploadsJson ? JSON.parse(uploadsJson) : [];
+
       // Add new upload to the beginning
-      uploadsCache.unshift(upload);
+      uploads.unshift(upload);
 
       // Keep only last 100 uploads (prevent unlimited growth)
-      if (uploadsCache.length > 100) {
-        uploadsCache = uploadsCache.slice(0, 100);
+      if (uploads.length > 100) {
+        uploads = uploads.slice(0, 100);
       }
 
-      console.log('[API] New upload added. Total:', uploadsCache.length);
+      // Save back to Redis
+      await redis.set(UPLOADS_KEY, JSON.stringify(uploads));
 
-      res.status(200).json({ success: true, uploads: uploadsCache });
+      console.log('[API] New upload added. Total:', uploads.length);
+
+      res.status(200).json({ success: true, uploads });
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }

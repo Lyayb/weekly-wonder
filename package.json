@@ -1,0 +1,8 @@
+{
+  "name": "quiet-archive",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "redis": "^4.7.0"
+  }
+}
