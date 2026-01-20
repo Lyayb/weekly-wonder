@@ -119,6 +119,8 @@
       width: 100%;
       height: auto;
       display: block;
+      max-height: 300px; /* Prevent images from being cut off screen */
+      object-fit: contain; /* Maintain aspect ratio, fit within bounds */
     }
 
     .window-meta {
@@ -773,7 +775,7 @@
       windowElements.forEach(({ element, zPosition }, index) => {
         // Show windows when camera is within range of their Z position
         const distance = Math.abs(cameraZ - zPosition);
-        const visibilityRange = 40; // Show one note at a time to prevent overlap
+        const visibilityRange = 100; // Show up to 3 notes at a time (60 spacing * 1.67)
 
         if (distance < visibilityRange) {
           element.style.display = 'block';
