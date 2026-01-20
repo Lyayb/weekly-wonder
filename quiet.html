@@ -682,12 +682,20 @@
         const zPosition = CONFIG.tunnelLength - (index * CONFIG.noteSpacing + 10); // Start closer: 440 for first note
 
         // Position notes in different screen zones for 2D HTML rendering
+        // Expanded grid to ensure no overlap with more unique positions
         const screenPositions = [
-          { left: '10%', top: '50%', zone: 'left' },
-          { left: '75%', top: '50%', zone: 'right' },
-          { left: '15%', top: '15%', zone: 'top-left' },
-          { left: '70%', top: '20%', zone: 'top-right' },
-          { left: '45%', top: '10%', zone: 'top-center' },
+          { left: '5%', top: '15%', zone: 'top-left' },
+          { left: '75%', top: '20%', zone: 'top-right' },
+          { left: '10%', top: '55%', zone: 'middle-left' },
+          { left: '70%', top: '60%', zone: 'middle-right' },
+          { left: '40%', top: '10%', zone: 'top-center' },
+          { left: '45%', top: '65%', zone: 'bottom-center' },
+          { left: '25%', top: '30%', zone: 'upper-left-center' },
+          { left: '60%', top: '40%', zone: 'upper-right-center' },
+          { left: '15%', top: '75%', zone: 'lower-left' },
+          { left: '65%', top: '80%', zone: 'lower-right' },
+          { left: '35%', top: '45%', zone: 'center' },
+          { left: '8%', top: '35%', zone: 'left-middle' },
         ];
 
         const screenPos = screenPositions[index % screenPositions.length];
