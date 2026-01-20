@@ -56,12 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log(`[Weekly Feed] Total data rows: ${dataRows.length}`);
 
-      // Collect valid items (with limit)
+      // Collect ALL valid items (no limit - load all weeks)
       const validItems = [];
-      const MAX_CARDS = 4;
 
       dataRows.forEach((row, index) => {
-        if (validItems.length >= MAX_CARDS) return; // Stop once we have 4 valid items
         if (!row.trim()) return; // Skip empty lines
 
         const cols = parseCSVRow(row);
@@ -119,15 +117,29 @@ document.addEventListener("DOMContentLoaded", () => {
       // Create a week block for each group
       console.log(`[Weekly Feed] Total weeks found: ${Object.keys(weekGroups).length}`);
 
-      let cardsCreatedCount = 0;
+      // Sort weeks by date (most recent first)
+      const sortedWeeks = Object.keys(weekGroups).sort((a, b) => {
+        const dateA = weekGroups[a].date;
+        const dateB = weekGroups[b].date;
+        // Parse dates in YYYY-MM-DD format and sort descending (newest first)
+        return new Date(dateB) - new Date(dateA);
+      });
 
-      Object.keys(weekGroups).forEach((weekLabel) => {
+      console.log(`[Weekly Feed] Sorted weeks (newest first):`, sortedWeeks);
+
+      // Wrap all weeks in a scrollable container
+      const weeksContainer = document.createElement("div");
+      weeksContainer.className = "weeks-container";
+      weeksContainer.id = "weeksContainer";
+
+      sortedWeeks.forEach((weekLabel, weekIndex) => {
         const weekData = weekGroups[weekLabel];
 
         console.log(`[Weekly Feed] Processing week: ${weekLabel}, items: ${weekData.items.length}`);
 
         const weekBlock = document.createElement("div");
         weekBlock.className = "week-block";
+        weekBlock.setAttribute("data-week-index", weekIndex);
 
         const label = document.createElement("h2");
         label.className = "week-label";
@@ -138,14 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const grid = document.createElement("div");
         grid.className = "week-grid";
 
-        // Add items for this week - ABSOLUTE LIMIT OF 4 CARDS
+        // Add ALL items for this week (no card limit)
         weekData.items.forEach((item) => {
-          if (cardsCreatedCount >= MAX_CARDS) {
-            console.log(`[Weekly Feed] HARD STOP - Already created ${MAX_CARDS} cards, skipping: ${item.title}`);
-            return;
-          }
-          cardsCreatedCount++;
-          console.log(`[Weekly Feed] Creating card ${cardsCreatedCount}/${MAX_CARDS}: ${item.title}`);
+          console.log(`[Weekly Feed] Creating card: ${item.title}`);
           const card = document.createElement("div");
           card.className = "card";
 
@@ -175,11 +182,96 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         weekBlock.appendChild(grid);
-        feed.appendChild(weekBlock);
+        weeksContainer.appendChild(weekBlock);
       });
 
-      console.log(`[Weekly Feed] Feed created with ${validItems.length} items`);
-      console.log("[Weekly Feed] loaded safely");
+      // Add navigation arrows
+      const navLeft = document.createElement("button");
+      navLeft.className = "week-nav week-nav-left";
+      navLeft.innerHTML = "←";
+      navLeft.setAttribute("aria-label", "Previous week");
+
+      const navRight = document.createElement("button");
+      navRight.className = "week-nav week-nav-right";
+      navRight.innerHTML = "→";
+      navRight.setAttribute("aria-label", "Next week");
+
+      // Add everything to feed
+      feed.appendChild(navLeft);
+      feed.appendChild(weeksContainer);
+      feed.appendChild(navRight);
+
+      console.log(`[Weekly Feed] Feed created with ${validItems.length} items across ${sortedWeeks.length} weeks`);
+
+      // Initialize week navigation
+      let currentWeekIndex = 0; // Start at most recent week (index 0)
+      const totalWeeks = sortedWeeks.length;
+
+      function showWeek(index) {
+        const weekBlocks = weeksContainer.querySelectorAll(".week-block");
+        weekBlocks.forEach((block, i) => {
+          block.style.display = i === index ? "block" : "none";
+        });
+
+        // Update navigation button states
+        navLeft.style.opacity = index > 0 ? "1" : "0.3";
+        navLeft.style.pointerEvents = index > 0 ? "auto" : "none";
+        navRight.style.opacity = index < totalWeeks - 1 ? "1" : "0.3";
+        navRight.style.pointerEvents = index < totalWeeks - 1 ? "auto" : "none";
+
+        currentWeekIndex = index;
+        console.log(`[Weekly Feed] Showing week ${index + 1}/${totalWeeks}: ${sortedWeeks[index]}`);
+      }
+
+      // Navigation button handlers
+      navLeft.addEventListener("click", () => {
+        if (currentWeekIndex > 0) {
+          showWeek(currentWeekIndex - 1);
+        }
+      });
+
+      navRight.addEventListener("click", () => {
+        if (currentWeekIndex < totalWeeks - 1) {
+          showWeek(currentWeekIndex + 1);
+        }
+      });
+
+      // Touch/swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      weeksContainer.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      weeksContainer.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            // Swiped left - show next week
+            if (currentWeekIndex < totalWeeks - 1) {
+              showWeek(currentWeekIndex + 1);
+            }
+          } else {
+            // Swiped right - show previous week
+            if (currentWeekIndex > 0) {
+              showWeek(currentWeekIndex - 1);
+            }
+          }
+        }
+      }
+
+      // Show the most recent week (index 0) by default
+      showWeek(0);
+
+      console.log("[Weekly Feed] loaded safely with week navigation");
 
       // ---- SEARCH FUNCTIONALITY ----
       const searchInput = document.querySelector(".search-bar input");

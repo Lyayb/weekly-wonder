@@ -294,6 +294,46 @@ body{
 .week-grid::-webkit-scrollbar-thumb:hover {
   background: #000;
 }
+
+/* Week Navigation Container */
+.weeks-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Week Navigation Arrows */
+.week-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #000;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 10;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+  color: #000;
+}
+
+.week-nav:hover {
+  background: #000;
+  color: #fff;
+}
+
+.week-nav-left {
+  left: 20px;
+}
+
+.week-nav-right {
+  right: 20px;
+}
+
 .card {
   flex: 0 0 300px; /* Fixed width for horizontal scroll */
   max-width: 300px;
@@ -1690,6 +1730,21 @@ body.info-page .info-pad {
     font-size: 11px;
     margin-bottom: 8px;
     letter-spacing: 1px;
+  }
+
+  /* Week navigation for mobile */
+  .week-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .week-nav-left {
+    left: 10px;
+  }
+
+  .week-nav-right {
+    right: 10px;
   }
 
   /* Weekly Wonder cards - KEEP HORIZONTAL SCROLL */
