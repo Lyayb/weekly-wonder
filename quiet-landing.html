@@ -897,26 +897,35 @@ Everything here was left by someone not for attention. Just to exist if you want
             timestamp: Date.now()
           };
 
-          // Store in localStorage
-          let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
-          uploads.push(upload);
-          localStorage.setItem('quietUploads', JSON.stringify(uploads));
+          // Save to API (syncs across devices)
+          fetch('/api/uploads', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(upload)
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('[Quiet Landing] ✓ Image upload saved to server:', upload);
+            console.log('[Quiet Landing] Total uploads now:', data.uploads.length);
+            alert(`✓ Image uploaded! Total uploads: ${data.uploads.length}\n\nClick "Enter" to view in gallery.`);
 
-          console.log('[Quiet Landing] ✓ Image upload saved:', upload);
-          console.log('[Quiet Landing] Total uploads now:', uploads.length);
-          console.log('[Quiet Landing] localStorage data:', localStorage.getItem('quietUploads'));
-          alert(`✓ Image uploaded! Total uploads: ${uploads.length}\n\nClick "Enter" to view in gallery.`);
-
-          // Reset form
-          imageInput.value = '';
-          imageName.value = '';
-          imageCity.value = '';
-          imageCaption.value = '';
-          imagePreview.style.display = 'none';
-          uploadedImageFile = null;
-          imageCaptionCounter.textContent = '250 characters remaining';
-          imageCaptionCounter.classList.remove('warning');
-          validateImageForm();
+            // Reset form after successful upload
+            imageInput.value = '';
+            imageName.value = '';
+            imageCity.value = '';
+            imageCaption.value = '';
+            imagePreview.style.display = 'none';
+            uploadedImageFile = null;
+            imageCaptionCounter.textContent = '250 characters remaining';
+            imageCaptionCounter.classList.remove('warning');
+            validateImageForm();
+          })
+          .catch(error => {
+            console.error('[Quiet Landing] ✗ Upload failed:', error);
+            alert('Upload failed. Please try again.');
+          });
         };
         reader.readAsDataURL(uploadedImageFile);
       }
@@ -963,23 +972,32 @@ Everything here was left by someone not for attention. Just to exist if you want
         timestamp: Date.now()
       };
 
-      // Store in localStorage
-      let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
-      uploads.push(upload);
-      localStorage.setItem('quietUploads', JSON.stringify(uploads));
+      // Save to API (syncs across devices)
+      fetch('/api/uploads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(upload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('[Quiet Landing] ✓ Text upload saved to server:', upload);
+        console.log('[Quiet Landing] Total uploads now:', data.uploads.length);
+        alert(`✓ Text uploaded! Total uploads: ${data.uploads.length}\n\nClick "Enter" to view in gallery.`);
 
-      console.log('[Quiet Landing] ✓ Text upload saved:', upload);
-      console.log('[Quiet Landing] Total uploads now:', uploads.length);
-      console.log('[Quiet Landing] localStorage data:', localStorage.getItem('quietUploads'));
-      alert(`✓ Text uploaded! Total uploads: ${uploads.length}\n\nClick "Enter" to view in gallery.`);
-
-      // Reset form
-      textContent.value = '';
-      textName.value = '';
-      textCity.value = '';
-      textContentCounter.textContent = '250 characters remaining';
-      textContentCounter.classList.remove('warning');
-      validateTextForm();
+        // Reset form after successful upload
+        textContent.value = '';
+        textName.value = '';
+        textCity.value = '';
+        textContentCounter.textContent = '250 characters remaining';
+        textContentCounter.classList.remove('warning');
+        validateTextForm();
+      })
+      .catch(error => {
+        console.error('[Quiet Landing] ✗ Upload failed:', error);
+        alert('Upload failed. Please try again.');
+      });
     });
 
     // Enter Gallery - Navigate to 3D tunnel

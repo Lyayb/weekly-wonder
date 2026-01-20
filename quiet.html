@@ -517,28 +517,52 @@
     };
 
     // ===== UPLOAD DATA =====
-    // Load uploads from localStorage - only show real user uploads
-    let uploads = JSON.parse(localStorage.getItem('quietUploads') || '[]');
-
-    console.log('[Quiet] Loaded', uploads.length, 'uploads from storage');
-    console.log('[Quiet] Upload data:', uploads);
+    // Load uploads from API (syncs across devices)
+    let uploads = [];
 
     // Debug: Check if we're on mobile
     const isMobile = window.innerWidth <= 768;
     console.log('[Quiet] Device type:', isMobile ? 'Mobile' : 'Desktop');
 
-    // Add one example upload if no uploads exist (for testing/demo)
-    if (uploads.length === 0) {
-      uploads = [
-        {
-          type: 'text',
-          content: 'This is an example note. Upload your own from the landing page!',
-          name: 'Example',
-          city: 'Demo',
-          timestamp: Date.now()
+    // Fetch uploads from API
+    async function loadUploads() {
+      try {
+        const response = await fetch('/api/uploads');
+        const data = await response.json();
+        uploads = data.uploads || [];
+
+        console.log('[Quiet] Loaded', uploads.length, 'uploads from server');
+        console.log('[Quiet] Upload data:', uploads);
+
+        // Add one example upload if no uploads exist (for testing/demo)
+        if (uploads.length === 0) {
+          uploads = [
+            {
+              type: 'text',
+              content: 'This is an example note. Upload your own from the landing page!',
+              name: 'Example',
+              city: 'Demo',
+              timestamp: Date.now()
+            }
+          ];
+          console.log('[Quiet] No uploads found - showing example note');
         }
-      ];
-      console.log('[Quiet] No uploads found - showing example note');
+
+        return uploads;
+      } catch (error) {
+        console.error('[Quiet] Failed to load uploads:', error);
+        // Fallback to example on error
+        uploads = [
+          {
+            type: 'text',
+            content: 'Failed to load uploads from server. Check your connection.',
+            name: 'Error',
+            city: 'System',
+            timestamp: Date.now()
+          }
+        ];
+        return uploads;
+      }
     }
 
 
@@ -862,7 +886,14 @@
     const gltfLoader = new GLTFLoader();
     let tunnelModel = null;
 
-    gltfLoader.load(
+    // Load uploads first, then GLB
+    loadUploads().then(() => {
+      console.log('[Quiet] Starting GLB load with', uploads.length, 'uploads');
+      loadGLB();
+    });
+
+    function loadGLB() {
+      gltfLoader.load(
       'Website scene .glb',
       (gltf) => {
         console.log('[Quiet] ✓ Gallery GLB loaded successfully');
@@ -923,6 +954,7 @@
         loadingScreen.querySelector('.loading-text').textContent = 'Error loading gallery';
       }
     );
+    } // End of loadGLB function
 
     // ===== ANIMATION LOOP =====
     function animate() {
