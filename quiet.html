@@ -534,33 +534,16 @@
         console.log('[Quiet] Loaded', uploads.length, 'uploads from server');
         console.log('[Quiet] Upload data:', uploads);
 
-        // Add one example upload if no uploads exist (for testing/demo)
+        // No example notes - only show real uploads
         if (uploads.length === 0) {
-          uploads = [
-            {
-              type: 'text',
-              content: 'This is an example note. Upload your own from the landing page!',
-              name: 'Example',
-              city: 'Demo',
-              timestamp: Date.now()
-            }
-          ];
-          console.log('[Quiet] No uploads found - showing example note');
+          console.log('[Quiet] No uploads found - gallery will be empty');
         }
 
         return uploads;
       } catch (error) {
         console.error('[Quiet] Failed to load uploads:', error);
-        // Fallback to example on error
-        uploads = [
-          {
-            type: 'text',
-            content: 'Failed to load uploads from server. Check your connection.',
-            name: 'Error',
-            city: 'System',
-            timestamp: Date.now()
-          }
-        ];
+        // Return empty array on error
+        uploads = [];
         return uploads;
       }
     }
