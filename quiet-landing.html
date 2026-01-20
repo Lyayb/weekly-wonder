@@ -875,13 +875,13 @@ Everything here was left by someone not for attention. Just to exist if you want
       const hasImage = uploadedImageFile !== null;
       const hasName = imageName.value.trim().length > 0;
       const hasCity = imageCity.value.trim().length > 0;
-      const hasCaption = imageCaption.value.trim().length > 0;
 
-      imageSubmitBtn.disabled = !(hasImage && hasName && hasCity && hasCaption);
+      imageSubmitBtn.disabled = !(hasImage && hasName && hasCity);
     }
 
     imageName.addEventListener('input', validateImageForm);
     imageCity.addEventListener('input', validateImageForm);
+    imageCaption.addEventListener('input', validateImageForm);
 
     // Image form submission
     imageSubmitBtn.addEventListener('click', () => {
