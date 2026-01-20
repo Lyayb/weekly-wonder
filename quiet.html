@@ -370,14 +370,13 @@
     }
 
     @media (max-width: 768px) {
-      /* Mobile styles - smaller notes positioned higher */
+      /* Mobile styles - smaller notes with varied positions */
 
       .upload-window {
         width: 140px !important; /* Smaller windows for mobile */
         transform: scale(0.9); /* Scale down to 90% */
         opacity: 1 !important;
-        /* Override positions to be higher on screen */
-        top: 25% !important; /* Position below title, above GLB center */
+        /* Don't override position - let each note use its unique position */
       }
 
       .window-header {
@@ -679,13 +678,15 @@
     const markerPlanes = [];
 
     function createWindows() {
+      const isMobile = window.innerWidth <= 768;
+
       uploads.forEach((upload, index) => {
         // Position markers along the path - starting from the far end
         const zPosition = CONFIG.tunnelLength - (index * CONFIG.noteSpacing + 10); // Start closer: 440 for first note
 
         // Position notes in different screen zones for 2D HTML rendering
-        // Expanded grid to ensure no overlap with more unique positions
-        const screenPositions = [
+        // Desktop and mobile use different positions to prevent overlap
+        const desktopPositions = [
           { left: '5%', top: '15%', zone: 'top-left' },
           { left: '75%', top: '20%', zone: 'top-right' },
           { left: '10%', top: '55%', zone: 'middle-left' },
@@ -700,6 +701,22 @@
           { left: '8%', top: '35%', zone: 'left-middle' },
         ];
 
+        const mobilePositions = [
+          { left: '8%', top: '20%', zone: 'top-left' },
+          { left: '60%', top: '25%', zone: 'top-right' },
+          { left: '12%', top: '50%', zone: 'middle-left' },
+          { left: '55%', top: '55%', zone: 'middle-right' },
+          { left: '30%', top: '18%', zone: 'top-center' },
+          { left: '35%', top: '60%', zone: 'bottom-center' },
+          { left: '15%', top: '35%', zone: 'upper-left' },
+          { left: '50%', top: '40%', zone: 'upper-right' },
+          { left: '20%', top: '68%', zone: 'lower-left' },
+          { left: '58%', top: '72%', zone: 'lower-right' },
+          { left: '28%', top: '45%', zone: 'center' },
+          { left: '10%', top: '58%', zone: 'left-lower' },
+        ];
+
+        const screenPositions = isMobile ? mobilePositions : desktopPositions;
         const screenPos = screenPositions[index % screenPositions.length];
 
         // Create HTML window element instead of 3D geometry
