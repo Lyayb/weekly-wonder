@@ -129,12 +129,26 @@ export default async function handler(req, res) {
 
       res.status(200).json({ success: true, uploads });
     } else if (req.method === 'DELETE') {
-      const { action } = req.query;
+      const { action, timestamp } = req.query;
 
       const uploadsJson = await redis.get(UPLOADS_KEY);
       let uploads = uploadsJson ? JSON.parse(uploadsJson) : [];
 
-      if (action === 'clear-large-images') {
+      if (action === 'delete-by-timestamp' && timestamp) {
+        // Delete specific upload by timestamp
+        const originalCount = uploads.length;
+        uploads = uploads.filter(upload => upload.timestamp != timestamp);
+
+        await redis.set(UPLOADS_KEY, JSON.stringify(uploads));
+        const removed = originalCount - uploads.length;
+        console.log('[API] Removed upload with timestamp:', timestamp);
+        res.status(200).json({
+          success: true,
+          removed,
+          remaining: uploads.length,
+          uploads
+        });
+      } else if (action === 'clear-large-images') {
         // Remove images larger than 1MB to free up Redis space
         const originalCount = uploads.length;
         uploads = uploads.filter(upload => {
