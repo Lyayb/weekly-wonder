@@ -62,8 +62,30 @@ export default async function handler(req, res) {
       const upload = req.body;
 
       // Validate upload
+      if (!upload || typeof upload !== 'object') {
+        return res.status(400).json({ error: 'Invalid request body' });
+      }
+
       if (!upload.type || !upload.content || !upload.name || !upload.city) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        return res.status(400).json({
+          error: 'Missing required fields',
+          received: {
+            type: !!upload.type,
+            content: !!upload.content,
+            name: !!upload.name,
+            city: !!upload.city
+          }
+        });
+      }
+
+      // Check content size (base64 images can be very large)
+      const contentSize = JSON.stringify(upload.content).length;
+      if (contentSize > 4 * 1024 * 1024) { // 4MB limit
+        return res.status(413).json({
+          error: 'Upload too large',
+          size: `${(contentSize / 1024 / 1024).toFixed(2)}MB`,
+          limit: '4MB'
+        });
       }
 
       // Add timestamp if not present
@@ -72,8 +94,10 @@ export default async function handler(req, res) {
       }
 
       // Get existing uploads
+      console.log('[API] Fetching existing uploads from Redis...');
       const uploadsJson = await redis.get(UPLOADS_KEY);
       let uploads = uploadsJson ? JSON.parse(uploadsJson) : [];
+      console.log('[API] Current uploads count:', uploads.length);
 
       // Check for duplicates before adding
       const isDuplicate = uploads.some(existing =>
@@ -126,6 +150,11 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('[API] Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('[API] Error stack:', error.stack);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+      type: error.name
+    });
   }
 }
