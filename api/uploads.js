@@ -80,11 +80,14 @@ export default async function handler(req, res) {
 
       // Check content size (base64 images can be very large)
       const contentSize = JSON.stringify(upload.content).length;
-      if (contentSize > 4 * 1024 * 1024) { // 4MB limit
+      const maxSize = upload.type === 'image' ? 1 * 1024 * 1024 : 4 * 1024 * 1024; // 1MB for images, 4MB for text
+
+      if (contentSize > maxSize) {
         return res.status(413).json({
           error: 'Upload too large',
           size: `${(contentSize / 1024 / 1024).toFixed(2)}MB`,
-          limit: '4MB'
+          limit: upload.type === 'image' ? '1MB' : '4MB',
+          suggestion: 'Please compress or resize your image before uploading'
         });
       }
 
@@ -126,25 +129,46 @@ export default async function handler(req, res) {
 
       res.status(200).json({ success: true, uploads });
     } else if (req.method === 'DELETE') {
-      // Clean duplicates from storage
+      const { action } = req.query;
+
       const uploadsJson = await redis.get(UPLOADS_KEY);
       let uploads = uploadsJson ? JSON.parse(uploadsJson) : [];
 
-      // Remove duplicates based on timestamp
-      const seen = new Set();
-      uploads = uploads.filter(upload => {
-        if (seen.has(upload.timestamp)) {
-          return false;
-        }
-        seen.add(upload.timestamp);
-        return true;
-      });
+      if (action === 'clear-large-images') {
+        // Remove images larger than 1MB to free up Redis space
+        const originalCount = uploads.length;
+        uploads = uploads.filter(upload => {
+          if (upload.type === 'image') {
+            const size = JSON.stringify(upload.content).length;
+            return size < 1 * 1024 * 1024; // Keep only images under 1MB
+          }
+          return true; // Keep all text uploads
+        });
 
-      // Save cleaned data
-      await redis.set(UPLOADS_KEY, JSON.stringify(uploads));
+        await redis.set(UPLOADS_KEY, JSON.stringify(uploads));
+        const removed = originalCount - uploads.length;
+        console.log('[API] Removed', removed, 'large images. Total:', uploads.length);
+        res.status(200).json({
+          success: true,
+          removed,
+          remaining: uploads.length,
+          uploads
+        });
+      } else {
+        // Clean duplicates from storage
+        const seen = new Set();
+        uploads = uploads.filter(upload => {
+          if (seen.has(upload.timestamp)) {
+            return false;
+          }
+          seen.add(upload.timestamp);
+          return true;
+        });
 
-      console.log('[API] Cleaned duplicates. Total:', uploads.length);
-      res.status(200).json({ success: true, uploads });
+        await redis.set(UPLOADS_KEY, JSON.stringify(uploads));
+        console.log('[API] Cleaned duplicates. Total:', uploads.length);
+        res.status(200).json({ success: true, uploads });
+      }
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }
