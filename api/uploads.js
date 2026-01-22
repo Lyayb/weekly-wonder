@@ -2,6 +2,7 @@
 // Uses Redis for persistent storage across deployments
 
 import { createClient } from 'redis';
+import sharp from 'sharp';
 
 // Redis client instance
 let redisClient = null;
@@ -78,16 +79,53 @@ export default async function handler(req, res) {
         });
       }
 
-      // Check content size (base64 images can be very large)
+      // Compress images before storing
+      if (upload.type === 'image') {
+        try {
+          console.log('[API] Compressing image...');
+          const originalSize = upload.content.length;
+
+          // Extract base64 data (remove data:image/...;base64, prefix if present)
+          let base64Data = upload.content;
+          if (base64Data.includes('base64,')) {
+            base64Data = base64Data.split('base64,')[1];
+          }
+
+          // Convert base64 to buffer
+          const imageBuffer = Buffer.from(base64Data, 'base64');
+
+          // Compress image with sharp
+          const compressedBuffer = await sharp(imageBuffer)
+            .resize(1200, 1200, { // Max 1200x1200, maintain aspect ratio
+              fit: 'inside',
+              withoutEnlargement: true
+            })
+            .jpeg({ quality: 75 }) // Convert to JPEG with 75% quality
+            .toBuffer();
+
+          // Convert back to base64
+          const compressedBase64 = `data:image/jpeg;base64,${compressedBuffer.toString('base64')}`;
+          upload.content = compressedBase64;
+
+          const newSize = compressedBase64.length;
+          const savings = ((1 - newSize / originalSize) * 100).toFixed(1);
+          console.log(`[API] Image compressed: ${(originalSize / 1024).toFixed(0)}KB → ${(newSize / 1024).toFixed(0)}KB (${savings}% reduction)`);
+        } catch (error) {
+          console.error('[API] Image compression failed:', error);
+          // Continue with original image if compression fails
+        }
+      }
+
+      // Check content size after compression
       const contentSize = JSON.stringify(upload.content).length;
-      const maxSize = upload.type === 'image' ? 1 * 1024 * 1024 : 4 * 1024 * 1024; // 1MB for images, 4MB for text
+      const maxSize = upload.type === 'image' ? 500 * 1024 : 4 * 1024 * 1024; // 500KB for images, 4MB for text
 
       if (contentSize > maxSize) {
         return res.status(413).json({
           error: 'Upload too large',
           size: `${(contentSize / 1024 / 1024).toFixed(2)}MB`,
-          limit: upload.type === 'image' ? '1MB' : '4MB',
-          suggestion: 'Please compress or resize your image before uploading'
+          limit: upload.type === 'image' ? '500KB' : '4MB',
+          suggestion: 'Image is still too large after compression. Please use a smaller image.'
         });
       }
 

@@ -1,0 +1,36 @@
+# Media files
+*.mp4
+*.mp3
+*.mov
+*.avi
+*.mkv
+*.wav
+*.flac
+
+# Image files
+*.PNG
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Dependencies and build artifacts
+node_modules/
+dist/
+build/
+.next/
+.cache/
+
+# OS and IDE files
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Other large files
+*.zip
+*.tar.gz
+*.pdf
