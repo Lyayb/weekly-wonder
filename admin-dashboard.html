@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Quiet Archive</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      background: #0a0a0a;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    /* Login Screen */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .login-box h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .login-box p {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: #fff;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .login-box button:hover {
+      background: #e0e0e0;
+    }
+
+    .error-message {
+      background: #3a1010;
+      border: 1px solid #ff5f56;
+      color: #ff5f56;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .dashboard.active {
+      display: block;
+    }
+
+    /* Header */
+    .dashboard-header {
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .dashboard-header .site-link {
+      color: #888;
+      text-decoration: none;
+      font-size: 13px;
+      margin-right: 20px;
+    }
+
+    .dashboard-header .site-link:hover {
+      color: #fff;
+    }
+
+    .logout-btn {
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .logout-btn:hover {
+      background: #444;
+    }
+
+    /* Main Content */
+    .dashboard-main {
+      padding: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .stat-card .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .subtext {
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 16px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #888;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Upload Grid */
+    .uploads-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .upload-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .upload-card:hover {
+      border-color: #555;
+    }
+
+    .upload-card .type-badge {
+      display: inline-block;
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 16px 16px 0;
+      border-radius: 4px;
+    }
+
+    .upload-card .content {
+      padding: 16px;
+    }
+
+    .upload-card .text-content {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: #ccc;
+    }
+
+    .upload-card .image-content {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+
+    .upload-card .meta {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .upload-card .meta strong {
+      color: #fff;
+    }
+
+    .upload-card .timestamp {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .upload-card .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .upload-card .btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #333;
+      background: none;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .upload-card .btn:hover {
+      background: #333;
+    }
+
+    .upload-card .btn.delete {
+      border-color: #ff5f56;
+      color: #ff5f56;
+    }
+
+    .upload-card .btn.delete:hover {
+      background: #ff5f56;
+      color: #fff;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    /* Filters */
+    .filters {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filters select {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .filters button {
+      background: #333;
+      border: none;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .filters button:hover {
+      background: #444;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: start;
+        gap: 12px;
+      }
+
+      .dashboard-main {
+        padding: 20px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .uploads-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h1>Admin Dashboard</h1>
+      <p>Quiet Archive Control Center</p>
+      <div id="loginError" class="error-message" style="display: none;"></div>
+      <input type="password" id="passwordInput" placeholder="Enter admin password" autofocus>
+      <button onclick="login()">Login</button>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <h1>Quiet Archive Dashboard</h1>
+      <div>
+        <a href="index.html" class="site-link" target="_blank">View Site →</a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-main">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Total Uploads</div>
+          <div class="value" id="totalUploads">-</div>
+          <div class="subtext">All time</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">This Week</div>
+          <div class="value" id="weekUploads">-</div>
+          <div class="subtext">Last 7 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Storage Used</div>
+          <div class="value" id="storageUsed">-</div>
+          <div class="subtext">of Redis limit</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Contributors</div>
+          <div class="value" id="uniqueContributors">-</div>
+          <div class="subtext">Unique names</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('all')">All Uploads</button>
+        <button class="tab-btn" onclick="switchTab('week')">This Week</button>
+        <button class="tab-btn" onclick="switchTab('images')">Images Only</button>
+        <button class="tab-btn" onclick="switchTab('text')">Text Only</button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <select id="sortBy" onchange="loadUploads()">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+        </select>
+        <button onclick="loadUploads()">Refresh</button>
+        <button onclick="exportData()">Export JSON</button>
+      </div>
+
+      <!-- Tab: All Uploads -->
+      <div class="tab-content active" id="tab-all">
+        <div id="uploadsContainer" class="loading">Loading uploads...</div>
+      </div>
+
+      <!-- Tab: This Week -->
+      <div class="tab-content" id="tab-week">
+        <div id="weekContainer" class="loading">Loading this week's uploads...</div>
+      </div>
+
+      <!-- Tab: Images -->
+      <div class="tab-content" id="tab-images">
+        <div id="imagesContainer" class="loading">Loading images...</div>
+      </div>
+
+      <!-- Tab: Text -->
+      <div class="tab-content" id="tab-text">
+        <div id="textContainer" class="loading">Loading text uploads...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple password auth (You should change this password!)
+    const ADMIN_PASSWORD = 'quietadmin123'; // CHANGE THIS!
+
+    let uploads = [];
+    let currentTab = 'all';
+
+    // Login
+    function login() {
+      const password = document.getElementById('passwordInput').value;
+      const errorEl = document.getElementById('loginError');
+
+      if (password === ADMIN_PASSWORD) {
+        localStorage.setItem('adminLoggedIn', 'true');
+        showDashboard();
+      } else {
+        errorEl.textContent = 'Incorrect password. Try again.';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    // Allow Enter key to login
+    document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') login();
+    });
+
+    // Logout
+    function logout() {
+      localStorage.removeItem('adminLoggedIn');
+      location.reload();
+    }
+
+    // Check if already logged in
+    function checkAuth() {
+      if (localStorage.getItem('adminLoggedIn') === 'true') {
+        showDashboard();
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
+      loadUploads();
+    }
+
+    // Load uploads from API
+    async function loadUploads() {
+      try {
+        const response = await fetch('/api/uploads');
+        const data = await response.json();
+        uploads = data.uploads || [];
+
+        console.log('Loaded', uploads.length, 'uploads');
+
+        updateStats();
+        renderUploads();
+      } catch (error) {
+        console.error('Error loading uploads:', error);
+        document.getElementById('uploadsContainer').innerHTML =
+          '<div class="loading">Error loading uploads: ' + error.message + '</div>';
+      }
+    }
+
+    // Update stats
+    function updateStats() {
+      // Total uploads
+      document.getElementById('totalUploads').textContent = uploads.length;
+
+      // This week (last 7 days)
+      const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+      const weekUploads = uploads.filter(u => u.timestamp > weekAgo);
+      document.getElementById('weekUploads').textContent = weekUploads.length;
+
+      // Storage (approximate)
+      const totalBytes = JSON.stringify(uploads).length;
+      const totalMB = (totalBytes / 1024 / 1024).toFixed(1);
+      document.getElementById('storageUsed').textContent = totalMB + ' MB';
+
+      // Unique contributors
+      const uniqueNames = new Set(uploads.map(u => u.name));
+      document.getElementById('uniqueContributors').textContent = uniqueNames.size;
+    }
+
+    // Render uploads based on current tab
+    function renderUploads() {
+      const sortBy = document.getElementById('sortBy').value;
+      let filteredUploads = [...uploads];
+
+      // Sort
+      if (sortBy === 'newest') {
+        filteredUploads.sort((a, b) => b.timestamp - a.timestamp);
+      } else {
+        filteredUploads.sort((a, b) => a.timestamp - b.timestamp);
+      }
+
+      // Render to appropriate container
+      if (currentTab === 'all') {
+        renderToContainer('uploadsContainer', filteredUploads);
+      } else if (currentTab === 'week') {
+        const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        const weekData = filteredUploads.filter(u => u.timestamp > weekAgo);
+        renderToContainer('weekContainer', weekData);
+      } else if (currentTab === 'images') {
+        const images = filteredUploads.filter(u => u.type === 'image');
+        renderToContainer('imagesContainer', images);
+      } else if (currentTab === 'text') {
+        const text = filteredUploads.filter(u => u.type === 'text');
+        renderToContainer('textContainer', text);
+      }
+    }
+
+    // Render uploads to a container
+    function renderToContainer(containerId, data) {
+      const container = document.getElementById(containerId);
+
+      if (data.length === 0) {
+        container.innerHTML = '<div class="loading">No uploads found.</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      container.className = 'uploads-grid';
+
+      data.forEach((upload) => {
+        const card = document.createElement('div');
+        card.className = 'upload-card';
+
+        const badge = document.createElement('div');
+        badge.className = 'type-badge';
+        badge.textContent = upload.type;
+
+        const content = document.createElement('div');
+        content.className = 'content';
+
+        if (upload.type === 'text') {
+          const text = document.createElement('div');
+          text.className = 'text-content';
+          text.textContent = upload.content;
+          content.appendChild(text);
+        } else if (upload.type === 'image') {
+          const img = document.createElement('img');
+          img.className = 'image-content';
+          img.src = upload.content;
+          content.appendChild(img);
+        }
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `<strong>${upload.name || 'Anonymous'}</strong> • ${upload.city || 'Unknown'}`;
+
+        const timestamp = document.createElement('div');
+        timestamp.className = 'timestamp';
+        timestamp.textContent = new Date(upload.timestamp).toLocaleString();
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'btn';
+        viewBtn.textContent = 'View Details';
+        viewBtn.onclick = () => alert(JSON.stringify(upload, null, 2));
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn delete';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => deleteUpload(upload.timestamp);
+
+        actions.appendChild(viewBtn);
+        actions.appendChild(deleteBtn);
+
+        content.appendChild(meta);
+        content.appendChild(timestamp);
+        content.appendChild(actions);
+
+        card.appendChild(badge);
+        card.appendChild(content);
+        container.appendChild(card);
+      });
+    }
+
+    // Delete upload
+    async function deleteUpload(timestamp) {
+      if (!confirm('Are you sure you want to delete this upload?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/uploads?action=delete-by-timestamp&timestamp=${timestamp}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('Upload deleted successfully!');
+          loadUploads();
+        } else {
+          alert('Failed to delete upload');
+        }
+      } catch (error) {
+        console.error('Error deleting upload:', error);
+        alert('Error deleting upload: ' + error.message);
+      }
+    }
+
+    // Switch tabs
+    function switchTab(tab) {
+      currentTab = tab;
+
+      // Update tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+
+      renderUploads();
+    }
+
+    // Export data as JSON
+    function exportData() {
+      const dataStr = JSON.stringify(uploads, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `quiet-archive-${Date.now()}.json`;
+      link.click();
+    }
+
+    // Initialize
+    checkAuth();
+  </script>
+</body>
+</html>
