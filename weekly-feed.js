@@ -41,23 +41,28 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  fetch(SHEET_URL)
-    .then((res) => {
-      console.log("[Weekly Feed] Fetch response status:", res.status);
-      return res.text();
+  // Fetch from BOTH Google Sheets AND new API
+  Promise.all([
+    fetch(SHEET_URL).then(res => res.text()),
+    fetch('/api/weekly-content').then(res => res.json()).catch(err => {
+      console.warn("[Weekly Feed] API fetch failed, using only Google Sheets:", err);
+      return { content: [] };
     })
-    .then((csv) => {
-      console.log("[Weekly Feed] CSV data received, length:", csv.length);
+  ])
+    .then(([csv, apiData]) => {
+      console.log("[Weekly Feed] Google Sheets CSV length:", csv.length);
+      console.log("[Weekly Feed] API content items:", apiData.content.length);
+
       feed.innerHTML = ""; // clear placeholder
-
-      // Split CSV, skip header, process ALL data rows
-      const allRows = csv.split("\n");
-      const dataRows = allRows.slice(1); // skip header
-
-      console.log(`[Weekly Feed] Total data rows: ${dataRows.length}`);
 
       // Collect ALL valid items (no limit - load all weeks)
       const validItems = [];
+
+      // --- PROCESS GOOGLE SHEETS DATA ---
+      const allRows = csv.split("\n");
+      const dataRows = allRows.slice(1); // skip header
+
+      console.log(`[Weekly Feed] Total Google Sheets rows: ${dataRows.length}`);
 
       dataRows.forEach((row, index) => {
         if (!row.trim()) return; // Skip empty lines
@@ -73,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const type = cols[3] || "";
         const notes = cols[8] || "";
 
-        console.log(`[Weekly Feed] Row ${index + 2}: week="${week}", title="${title}", image="${image.substring(0, 30)}..."`);
+        console.log(`[Weekly Feed] Sheets Row ${index + 2}: week="${week}", title="${title}"`);
 
         // Only add if it has ALL required fields
         if (week.trim() && title.trim() && image.trim()) {
@@ -84,11 +89,32 @@ document.addEventListener("DOMContentLoaded", () => {
             link,
             image,
             type,
-            notes
+            notes,
+            source: 'sheets'
           });
-          console.log(`[Weekly Feed] ✓ Valid item ${validItems.length}: ${title}`);
+          console.log(`[Weekly Feed] ✓ Valid Sheets item ${validItems.length}: ${title}`);
         } else {
-          console.log(`[Weekly Feed] ✗ Skipped incomplete row ${index + 2}`);
+          console.log(`[Weekly Feed] ✗ Skipped incomplete Sheets row ${index + 2}`);
+        }
+      });
+
+      // --- PROCESS API DATA ---
+      apiData.content.forEach((item, index) => {
+        console.log(`[Weekly Feed] API item ${index + 1}: title="${item.title}"`);
+
+        // Convert API format to match our structure
+        if (item.title && item.image) {
+          validItems.push({
+            week: item.week || item.date || "",
+            date: item.date || "",
+            title: item.title || "",
+            link: item.link || "",
+            image: item.image || "",
+            type: item.type || "",
+            notes: item.notes || "",
+            source: 'api'
+          });
+          console.log(`[Weekly Feed] ✓ Valid API item ${validItems.length}: ${item.title}`);
         }
       });
 
