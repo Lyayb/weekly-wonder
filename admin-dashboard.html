@@ -368,6 +368,138 @@
       background: #444;
     }
 
+    /* Create Upload Form */
+    .create-upload-form {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 40px;
+      max-width: 800px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #fff;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #imagePreview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 6px;
+      border: 1px solid #333;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .preview-btn,
+    .publish-btn {
+      flex: 1;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preview-btn {
+      background: #333;
+      color: #fff;
+    }
+
+    .preview-btn:hover {
+      background: #444;
+    }
+
+    .publish-btn {
+      background: #fff;
+      color: #000;
+    }
+
+    .publish-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .publish-btn:disabled {
+      background: #333;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    #createStatus {
+      padding: 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: none;
+    }
+
+    #createStatus.success {
+      display: block;
+      background: #1a3a1a;
+      border: 1px solid #27c93f;
+      color: #27c93f;
+    }
+
+    #createStatus.error {
+      display: block;
+      background: #3a1010;
+      border: 1px solid #ff5f56;
+      color: #ff5f56;
+    }
+
     @media (max-width: 768px) {
       .dashboard-header {
         padding: 16px 20px;
@@ -447,6 +579,8 @@
 
       <!-- Tabs -->
       <div class="tabs">
+        <button class="tab-btn" onclick="switchTab('weekly')">📝 My Weekly Content</button>
+        <button class="tab-btn" onclick="switchTab('create')">✏️ Quiet Archive Upload</button>
         <button class="tab-btn active" onclick="switchTab('all')">All Uploads</button>
         <button class="tab-btn" onclick="switchTab('week')">This Week</button>
         <button class="tab-btn" onclick="switchTab('images')">Images Only</button>
@@ -454,13 +588,125 @@
       </div>
 
       <!-- Filters -->
-      <div class="filters">
+      <div class="filters" id="uploadFilters">
         <select id="sortBy" onchange="loadUploads()">
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
         </select>
         <button onclick="loadUploads()">Refresh</button>
         <button onclick="exportData()">Export JSON</button>
+      </div>
+
+      <!-- Tab: My Weekly Content -->
+      <div class="tab-content" id="tab-weekly">
+        <div class="create-upload-form">
+          <h2 style="margin-bottom: 24px; font-size: 20px;">My Weekly Content</h2>
+          <p style="font-size: 13px; color: #888; margin-bottom: 32px;">Create items for your weekly blog (like your Google Sheets). Add multiple items per week: websites, eye candy, articles, videos.</p>
+
+          <div class="form-group">
+            <label>Type</label>
+            <select id="weeklyType">
+              <option value="Website">Website</option>
+              <option value="Eye Candy">Eye Candy</option>
+              <option value="Articles">Articles</option>
+              <option value="Videos">Videos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="weeklyTitle" placeholder="e.g., Fiorella's Floor Lamp">
+          </div>
+
+          <div class="form-group">
+            <label>Link (URL)</label>
+            <input type="text" id="weeklyLink" placeholder="https://...">
+          </div>
+
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" id="weeklyImage" placeholder="https://i.imgur.com/...">
+            <p style="font-size: 11px; color: #666; margin-top: 6px;">Upload to Imgur and paste the direct link</p>
+          </div>
+
+          <div class="form-group">
+            <label>Notes / Commentary</label>
+            <textarea id="weeklyNotes" rows="4" placeholder="Your thoughts about this item..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Week</label>
+            <input type="date" id="weeklyDate">
+          </div>
+
+          <div class="form-actions">
+            <button class="preview-btn" onclick="previewWeeklyItem()">Preview</button>
+            <button class="publish-btn" onclick="addWeeklyItem()">Add Item</button>
+          </div>
+
+          <div id="weeklyStatus" style="margin-top: 20px; padding: 16px; border-radius: 6px; font-size: 14px; display: none;"></div>
+
+          <!-- List of this week's items -->
+          <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #333;">
+            <h3 style="font-size: 16px; margin-bottom: 20px;">Your Weekly Items</h3>
+            <div id="weeklyItemsList" class="loading">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Create Weekly Upload -->
+      <div class="tab-content" id="tab-create">
+        <div class="create-upload-form">
+          <h2 style="margin-bottom: 24px; font-size: 20px;">Create Your Weekly Upload</h2>
+
+          <div class="form-group">
+            <label>Upload Type</label>
+            <select id="createType" onchange="toggleUploadFields()">
+              <option value="text">Text Post</option>
+              <option value="image">Image Post</option>
+              <option value="audio">Audio Post</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="textField">
+            <label>Your Text</label>
+            <textarea id="createText" rows="8" placeholder="Write your weekly reflection, thought, or story..."></textarea>
+          </div>
+
+          <div class="form-group" id="imageField" style="display: none;">
+            <label>Upload Image</label>
+            <input type="file" id="createImage" accept="image/*" onchange="previewImage()">
+            <div id="imagePreview" style="margin-top: 12px;"></div>
+          </div>
+
+          <div class="form-group" id="captionField" style="display: none;">
+            <label>Image Caption (optional)</label>
+            <input type="text" id="createCaption" placeholder="Add a caption for your image...">
+          </div>
+
+          <div class="form-group" id="audioField" style="display: none;">
+            <label>Audio URL</label>
+            <input type="text" id="createAudio" placeholder="Paste audio URL (mp3, wav, etc.)">
+            <p style="font-size: 12px; color: #888; margin-top: 8px;">Upload your audio to a service like Dropbox or Google Drive and paste the direct link here</p>
+          </div>
+
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="createName" placeholder="Gabriella" value="Gabriella">
+          </div>
+
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="createCity" placeholder="Canada" value="Canada">
+          </div>
+
+          <div class="form-actions">
+            <button class="preview-btn" onclick="previewUpload()">Preview</button>
+            <button class="publish-btn" onclick="publishUpload()">Publish to Archive</button>
+          </div>
+
+          <div id="createStatus" style="margin-top: 20px;"></div>
+        </div>
       </div>
 
       <!-- Tab: All Uploads -->
@@ -490,6 +736,7 @@
     const ADMIN_PASSWORD = 'Yukirolling2045'; // CHANGE THIS!
 
     let uploads = [];
+    let weeklyContent = [];
     let currentTab = 'all';
 
     // Login
@@ -528,7 +775,182 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').classList.add('active');
       loadUploads();
+
+      // Set today's date in weekly date picker
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('weeklyDate').value = today;
     }
+
+    // === WEEKLY CONTENT FUNCTIONS ===
+
+    async function loadWeeklyContent() {
+      try {
+        const response = await fetch('/api/weekly-content');
+        const data = await response.json();
+        weeklyContent = data.content || [];
+
+        console.log('Loaded', weeklyContent.length, 'weekly content items');
+        renderWeeklyItems();
+      } catch (error) {
+        console.error('Error loading weekly content:', error);
+        document.getElementById('weeklyItemsList').innerHTML =
+          '<div class="loading">Error loading items: ' + error.message + '</div>';
+      }
+    }
+
+    function renderWeeklyItems() {
+      const container = document.getElementById('weeklyItemsList');
+
+      if (weeklyContent.length === 0) {
+        container.innerHTML = '<div class="loading">No weekly items yet. Add your first one above!</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      container.style.display = 'grid';
+      container.style.gap = '16px';
+
+      weeklyContent.forEach((item) => {
+        const card = document.createElement('div');
+        card.style.cssText = `
+          background: #0a0a0a;
+          border: 1px solid #333;
+          border-radius: 6px;
+          padding: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: start;
+        `;
+
+        const content = document.createElement('div');
+        content.style.flex = '1';
+        content.innerHTML = `
+          <div style="font-size: 10px; text-transform: uppercase; color: #888; margin-bottom: 4px;">${item.type}</div>
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">${item.title}</div>
+          <div style="font-size: 12px; color: #888; margin-bottom: 4px;">${item.notes || ''}</div>
+          <div style="font-size: 11px; color: #666;">Week: ${item.week || item.date}</div>
+        `;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.style.cssText = `
+          padding: 6px 12px;
+          background: #3a1010;
+          color: #ff5f56;
+          border: 1px solid #ff5f56;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 11px;
+        `;
+        deleteBtn.onclick = () => deleteWeeklyItem(item.timestamp);
+
+        card.appendChild(content);
+        card.appendChild(deleteBtn);
+        container.appendChild(card);
+      });
+    }
+
+    async function addWeeklyItem() {
+      const type = document.getElementById('weeklyType').value;
+      const title = document.getElementById('weeklyTitle').value.trim();
+      const link = document.getElementById('weeklyLink').value.trim();
+      const image = document.getElementById('weeklyImage').value.trim();
+      const notes = document.getElementById('weeklyNotes').value.trim();
+      const date = document.getElementById('weeklyDate').value;
+
+      if (!title) {
+        showWeeklyStatus('Please enter a title', 'error');
+        return;
+      }
+
+      const item = {
+        type,
+        title,
+        link,
+        image,
+        notes,
+        date,
+        week: date,
+        timestamp: Date.now()
+      };
+
+      const publishBtn = event.target;
+      publishBtn.disabled = true;
+      publishBtn.textContent = 'Adding...';
+
+      try {
+        const response = await fetch('/api/weekly-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          showWeeklyStatus('✓ Item added successfully!', 'success');
+          clearWeeklyForm();
+          loadWeeklyContent();
+        } else {
+          throw new Error(data.error || 'Failed to add item');
+        }
+      } catch (error) {
+        console.error('Error adding weekly item:', error);
+        showWeeklyStatus('✗ Error: ' + error.message, 'error');
+      } finally {
+        publishBtn.disabled = false;
+        publishBtn.textContent = 'Add Item';
+      }
+    }
+
+    async function deleteWeeklyItem(timestamp) {
+      if (!confirm('Delete this item?')) return;
+
+      try {
+        const response = await fetch(`/api/weekly-content?timestamp=${timestamp}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          showWeeklyStatus('Item deleted', 'success');
+          loadWeeklyContent();
+        }
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        showWeeklyStatus('Error deleting item', 'error');
+      }
+    }
+
+    function previewWeeklyItem() {
+      const item = {
+        type: document.getElementById('weeklyType').value,
+        title: document.getElementById('weeklyTitle').value,
+        link: document.getElementById('weeklyLink').value,
+        image: document.getElementById('weeklyImage').value,
+        notes: document.getElementById('weeklyNotes').value,
+        date: document.getElementById('weeklyDate').value
+      };
+      alert('Preview:\n\n' + JSON.stringify(item, null, 2));
+    }
+
+    function showWeeklyStatus(message, type) {
+      const status = document.getElementById('weeklyStatus');
+      status.textContent = message;
+      status.style.display = 'block';
+      status.style.background = type === 'success' ? '#1a3a1a' : '#3a1010';
+      status.style.border = `1px solid ${type === 'success' ? '#27c93f' : '#ff5f56'}`;
+      status.style.color = type === 'success' ? '#27c93f' : '#ff5f56';
+    }
+
+    function clearWeeklyForm() {
+      document.getElementById('weeklyTitle').value = '';
+      document.getElementById('weeklyLink').value = '';
+      document.getElementById('weeklyImage').value = '';
+      document.getElementById('weeklyNotes').value = '';
+    }
+
+    // === END WEEKLY CONTENT FUNCTIONS ===
 
     // Load uploads from API
     async function loadUploads() {
@@ -702,7 +1124,167 @@
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.getElementById(`tab-${tab}`).classList.add('active');
 
-      renderUploads();
+      // Hide/show filters
+      const filters = document.getElementById('uploadFilters');
+      if (tab === 'create' || tab === 'weekly') {
+        filters.style.display = 'none';
+        if (tab === 'weekly') {
+          loadWeeklyContent();
+        }
+      } else {
+        filters.style.display = 'flex';
+        renderUploads();
+      }
+    }
+
+    // Toggle upload fields based on type
+    function toggleUploadFields() {
+      const type = document.getElementById('createType').value;
+
+      document.getElementById('textField').style.display = type === 'text' ? 'block' : 'none';
+      document.getElementById('imageField').style.display = type === 'image' ? 'block' : 'none';
+      document.getElementById('captionField').style.display = type === 'image' ? 'block' : 'none';
+      document.getElementById('audioField').style.display = type === 'audio' ? 'block' : 'none';
+    }
+
+    // Preview image before upload
+    function previewImage() {
+      const file = document.getElementById('createImage').files[0];
+      const preview = document.getElementById('imagePreview');
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Preview upload
+    function previewUpload() {
+      const upload = gatherUploadData();
+      if (!upload) return;
+
+      alert('Preview:\n\n' + JSON.stringify(upload, null, 2));
+    }
+
+    // Gather upload data from form
+    function gatherUploadData() {
+      const type = document.getElementById('createType').value;
+      const name = document.getElementById('createName').value.trim();
+      const city = document.getElementById('createCity').value.trim();
+
+      if (!name || !city) {
+        showStatus('Please fill in your name and location', 'error');
+        return null;
+      }
+
+      const upload = {
+        type,
+        name,
+        city,
+        timestamp: Date.now()
+      };
+
+      if (type === 'text') {
+        const text = document.getElementById('createText').value.trim();
+        if (!text) {
+          showStatus('Please enter some text', 'error');
+          return null;
+        }
+        upload.content = text;
+      } else if (type === 'image') {
+        const file = document.getElementById('createImage').files[0];
+        if (!file) {
+          showStatus('Please select an image', 'error');
+          return null;
+        }
+        // Image will be read as base64 in publishUpload
+        upload.imageFile = file;
+        upload.caption = document.getElementById('createCaption').value.trim();
+      } else if (type === 'audio') {
+        const audioUrl = document.getElementById('createAudio').value.trim();
+        if (!audioUrl) {
+          showStatus('Please enter an audio URL', 'error');
+          return null;
+        }
+        upload.content = audioUrl;
+      }
+
+      return upload;
+    }
+
+    // Publish upload to API
+    async function publishUpload() {
+      const upload = gatherUploadData();
+      if (!upload) return;
+
+      const publishBtn = document.querySelector('.publish-btn');
+      publishBtn.disabled = true;
+      publishBtn.textContent = 'Publishing...';
+
+      try {
+        // If it's an image, read file as base64
+        if (upload.type === 'image' && upload.imageFile) {
+          const reader = new FileReader();
+          await new Promise((resolve, reject) => {
+            reader.onload = function(e) {
+              upload.content = e.target.result;
+              delete upload.imageFile;
+              resolve();
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(upload.imageFile);
+          });
+        }
+
+        // Send to API
+        const response = await fetch('/api/uploads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(upload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          showStatus('✓ Upload published successfully!', 'success');
+          clearForm();
+          loadUploads();
+
+          // Switch to "All Uploads" tab after 2 seconds
+          setTimeout(() => {
+            document.querySelector('.tab-btn[onclick*="all"]').click();
+          }, 2000);
+        } else {
+          throw new Error(data.error || 'Upload failed');
+        }
+      } catch (error) {
+        console.error('Error publishing upload:', error);
+        showStatus('✗ Error: ' + error.message, 'error');
+      } finally {
+        publishBtn.disabled = false;
+        publishBtn.textContent = 'Publish to Archive';
+      }
+    }
+
+    // Show status message
+    function showStatus(message, type) {
+      const status = document.getElementById('createStatus');
+      status.textContent = message;
+      status.className = type;
+    }
+
+    // Clear form after successful upload
+    function clearForm() {
+      document.getElementById('createText').value = '';
+      document.getElementById('createImage').value = '';
+      document.getElementById('createCaption').value = '';
+      document.getElementById('createAudio').value = '';
+      document.getElementById('imagePreview').innerHTML = '';
     }
 
     // Export data as JSON
